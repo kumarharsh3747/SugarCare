@@ -1,24 +1,16 @@
 package com.example.sugarfree
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.runtime.Composable
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
+
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +30,6 @@ fun Home(navController: NavController) {
     val image1 = painterResource(id = R.drawable.image1)
     val image2 = painterResource(id = R.drawable.image2)
     val image3 = painterResource(id = R.drawable.image3)
-
 
     Scaffold(
         topBar = { AppBar3(navController) },
@@ -76,35 +67,33 @@ fun BottomNavigationBar(navController: NavController) {
         content = {
             Spacer(modifier = Modifier.weight(1f, true))
 
-            // Food Scanner Icon Button
             IconButton(onClick = { navController.navigate("foodScanner") }) {
-                Icon(imageVector = Icons.Default.Search, contentDescription = "foodScanner")
+                Icon(imageVector = Icons.Default.Search, contentDescription = "Food Scanner")
             }
 
             Spacer(modifier = Modifier.weight(1f, true))
 
-            // Detox Icon Button (First)
             IconButton(onClick = { navController.navigate("detox") }) {
-                Icon(imageVector = Icons.Default.Menu, contentDescription = "detox")
-            }
-
-           Spacer(modifier = Modifier.weight(1f, true))
-
-            // Detox Icon Button (Second)
-            IconButton(onClick = { navController.navigate("fruitlist") }) {
-                Icon(imageVector = Icons.Default.Info, contentDescription = "fruitlist")
+                Icon(imageVector = Icons.Default.Menu, contentDescription = "Detox")
             }
 
             Spacer(modifier = Modifier.weight(1f, true))
+
             IconButton(onClick = { navController.navigate("fruitlist") }) {
-                Icon(imageVector = Icons.Default.Home, contentDescription = "fruitlist")
+                Icon(imageVector = Icons.Default.Home, contentDescription = "Fruit List")
+            }
+
+            Spacer(modifier = Modifier.weight(1f, true))
+
+            IconButton(onClick = { navController.navigate("home") }) {
+                Icon(imageVector = Icons.Default.Home, contentDescription = "Home")
             }
 
             Spacer(modifier = Modifier.weight(1f, true))
         }
     )
-
 }
+
 
 @Composable
 fun InfiniteLoopedImageBox(
@@ -197,7 +186,7 @@ fun AppBar3(navController: NavController) {
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .clickable { navController.navigate("profile") }
+                        .clickable { navController.navigate("auth") } // Navigate to AuthPage for login/signup
                 )
             }
         }

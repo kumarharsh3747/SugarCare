@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 
@@ -27,7 +28,7 @@ data class Product(
 
 @OptIn(ExperimentalMaterial3Api::class) // Suppress experimental API warning
 @Composable
-fun ECommercePage(navController: NavHostController) {
+fun ECommercePage(navController: NavController) {
     // Cart state: List of added products
     val cartItems = remember { mutableStateListOf<Product>() }
 
@@ -46,7 +47,7 @@ fun ECommercePage(navController: NavHostController) {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier.fillMaxSize().padding(1.dp)
     ) {
         // Top App Bar with cart icon
         TopAppBar(
