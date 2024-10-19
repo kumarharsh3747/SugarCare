@@ -47,12 +47,12 @@ fun Home(navController: NavController) {
         bottomBar = { BottomNavigationBar(navController) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate("ChatBot") },
+                onClick = { navController.navigate("healthMonitor") },
                 modifier = Modifier.padding(16.dp)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Chat,
-                    contentDescription = "Chatbot",
+                    contentDescription = "Health Monitor",
                     tint = MaterialTheme.colorScheme.onSecondary
                 )
             }

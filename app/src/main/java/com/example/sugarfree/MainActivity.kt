@@ -35,6 +35,13 @@ class MainActivity : ComponentActivity() {
                 composable("fruitlist") {
                     Home2(navController)
                 }
+                composable("healthMonitor") {
+                    HealthMonitor(navController)
+                }
+                composable("symptoms") {
+                    Symptoms()
+                }
+
             }
         }
     }

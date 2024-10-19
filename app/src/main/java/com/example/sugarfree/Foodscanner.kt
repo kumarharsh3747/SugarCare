@@ -1,6 +1,7 @@
 package com.example.sugarfree
 
 import android.Manifest
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
@@ -10,11 +11,10 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,7 +23,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
@@ -36,7 +42,6 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-//@OptIn(ExperimentalPermissionsApi::class)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FoodScannerSimpleUI(navController: NavController) {
@@ -54,48 +59,51 @@ fun FoodScannerSimpleUI(navController: NavController) {
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            /*Text(
-                text = "AI-Powered Food Scanner",
-
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(bottom = 50.dp)
-            )*/
-            // Top App Bar
             TopAppBar(
-                title = {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ){
-                    Text(
-                        text = "AI-Powered Food Scanner",
-
-                        color = Color.White
-                    )}
-                },
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor =Color(0xFF734F96)),
-                modifier = Modifier.height(50.dp)
+                title = { Text(text = "                  Food Scanner", color = Color.Black) },
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFFE3D4EA)),
+                modifier = Modifier.height(60.dp)
             )
-
 
             CameraPreview(
                 modifier = Modifier
                     .size(200.dp)
-                    .padding(top = 80.dp)
+                    .padding(top = 70.dp)
                     .background(Color.Gray),
                 imageCapture = imageCapture
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Recognized Text Section - Make it scrollable
-            Text(text = "Recognized Text:",modifier = Modifier.padding(vertical = 60.dp))
-            Box(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-                Text(
-                    text = if (recognizedText.isNotEmpty()) recognizedText else "No text recognized yet",
-                    style = MaterialTheme.typography.bodyLarge,
-                    //modifier = Modifier.padding(vertical = 1.dp)
-                )
+            Text(text = "Recognized Text:", modifier = Modifier.padding(vertical = 8.dp))
+
+            // Box for Extracted Text with Dark Blue Background
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp)
+                    .background(Color(0xFFE3D4EA)) // Dark Blue Background
+                    .padding(16.dp)
+            ) {
+                if (recognizedText.isNotEmpty()) {
+                    val sugarKeywords = listOf("glucose", "sugar", "fructose", "sucrose", "maltose", "dextrose", "syrup")
+                    Text(
+                        text = highlightSugars(recognizedText, sugarKeywords),
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Justify, // Justify text
+                        color = Color.Black, // White text for readability
+                        lineHeight = 54.sp // Adjust line height
+                    )
+                } else {
+                    Text(
+                        text = "             No text recognized yet",
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                }
             }
 
             Text(text = "Hidden Sugars:")
@@ -120,14 +128,11 @@ fun FoodScannerSimpleUI(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Bottom Navigation Bar
             FoodScannerBottomNavigationBar(navController)
-
         }
     }
 }
 
-// Request camera permission
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RequestCameraPermission(onGranted: @Composable () -> Unit) {
@@ -142,7 +147,6 @@ fun RequestCameraPermission(onGranted: @Composable () -> Unit) {
     }
 }
 
-// Camera Preview Implementation
 @Composable
 fun CameraPreview(modifier: Modifier = Modifier, imageCapture: ImageCapture) {
     val context = LocalContext.current
@@ -151,10 +155,7 @@ fun CameraPreview(modifier: Modifier = Modifier, imageCapture: ImageCapture) {
     val previewView = remember { PreviewView(context) }
     val cameraExecutor: ExecutorService = remember { Executors.newSingleThreadExecutor() }
 
-    AndroidView(
-        factory = { previewView },
-        modifier = modifier
-    ) { view ->
+    AndroidView(factory = { previewView }, modifier = modifier) { view ->
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
             val preview = Preview.Builder().build().also {
@@ -172,9 +173,8 @@ fun CameraPreview(modifier: Modifier = Modifier, imageCapture: ImageCapture) {
     }
 }
 
-// Function to capture and recognize text from image
 fun captureAndRecognizeText(
-    context: android.content.Context,
+    context: Context,
     imageCapture: ImageCapture,
     onTextRecognized: (String) -> Unit
 ) {
@@ -205,7 +205,6 @@ fun captureAndRecognizeText(
     )
 }
 
-// Extension function to convert ImageProxy to Bitmap
 fun ImageProxy.toBitmap(): Bitmap {
     val buffer = planes[0].buffer
     val bytes = ByteArray(buffer.remaining())
@@ -213,30 +212,46 @@ fun ImageProxy.toBitmap(): Bitmap {
     return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
 }
 
-// Function to find hidden sugars in recognized text
 fun findHiddenSugars(text: String): List<String> {
-    val sugarKeywords = listOf("glucose", "fructose", "sucrose", "maltose", "dextrose")
-    return sugarKeywords.filter { text.contains(it, ignoreCase = true) }
+    val sugarKeywords = listOf("glucose", "fructose", "sucrose", "maltose", "dextrose", "syrup", "honey", "lactose")
+    val regex = Regex(sugarKeywords.joinToString("|"), RegexOption.IGNORE_CASE)
+    return regex.findAll(text).map { it.value }.distinct().toList()
 }
 
-// Bottom Navigation Bar Implementation
+fun highlightSugars(text: String, keywords: List<String>): AnnotatedString {
+    return buildAnnotatedString {
+        val lowerCaseText = text.lowercase()
+        var currentIndex = 0
+
+        while (currentIndex < text.length) {
+            val match = keywords.firstOrNull { lowerCaseText.indexOf(it, currentIndex) >= 0 }
+            if (match != null) {
+                val start = lowerCaseText.indexOf(match, currentIndex)
+                append(text.substring(currentIndex, start))
+                withStyle(style = SpanStyle(color = Color.Red)) {
+                    append(text.substring(start, start + match.length))
+                }
+                currentIndex = start + match.length
+            } else {
+                append(text.substring(currentIndex))
+                break
+            }
+        }
+    }
+}
+
 @Composable
 fun FoodScannerBottomNavigationBar(navController: NavController) {
     BottomAppBar {
-        IconButton(onClick = {
-            navController.navigate("Home") // Replace with your home route
-        }) {
+        IconButton(onClick = { navController.navigate("Home") }) {
             Icon(Icons.Default.Home, contentDescription = "Home")
         }
-        IconButton(onClick = {
-            navController.navigate("detox") // Replace with your profile route
-        }) {
+        IconButton(onClick = { navController.navigate("detox") }) {
             Image(
-                painter = painterResource(id = R.drawable.cart), // Replace with your image resource
+                painter = painterResource(id = R.drawable.cart),
                 contentDescription = "Profile",
-                modifier = Modifier.size(24.dp) // Adjust size as needed
+                modifier = Modifier.size(24.dp)
             )
         }
-        // Add more icons or buttons as necessary
     }
 }
