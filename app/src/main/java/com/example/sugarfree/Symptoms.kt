@@ -2,13 +2,17 @@ package com.example.sugarfree
 
 import android.content.Intent
 import android.net.Uri // Add this import for Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -24,9 +28,9 @@ fun Symptoms() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Symptoms", fontSize = 20.sp) },
+                title = { Text(text = "Symptoms", fontSize = 40.sp,fontWeight = FontWeight.Bold ,color = MaterialTheme.colorScheme.onSecondary) },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = Color(0x7C0F0F3B)
                 )
             )
         }
@@ -38,11 +42,12 @@ fun Symptoms() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(2.dp)
                 .verticalScroll(scrollState)  // Make content scrollable
+                .background(Color(0xFFE3D4EA)) // Set the background color of the main content
         ) {
             // Heading
-            Text(text = "What is Diabetes?", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+            Text(text = "\nWhat is Diabetes?", fontSize = 22.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(16.dp))
 
             // Paragraph
@@ -53,7 +58,7 @@ fun Symptoms() {
             Spacer(modifier = Modifier.height(24.dp))
 
             // Subheading1
-            Text(text = "Why Monitor Symptoms?", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = "Why Monitor Symptoms?", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
@@ -63,29 +68,19 @@ fun Symptoms() {
             )
 
             // Subheading 1.1
-            Text(text = "Symptoms?", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = "Symptoms?", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = "• Frequent urination\n" +
-                        "• Increased thirst\n" +
-                        "• Extreme hunger\n" +
-                        "• Unexplained weight loss\n" +
-                        "• Fatigue\n" +
-                        "• Blurred vision\n" +
-                        "• Slow-healing sores\n" +
-                        "• Tingling in hands or feet\n" +
-                        "• Nausea and vomiting (in some cases)",
-                fontSize = 18.sp
-            )
+            SymptomsTreeLayout()
+
             Spacer(modifier = Modifier.height(24.dp))
 
             // Heading2
-            Text(text = "Types of Diabetes", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+            Text(text = "Types of Diabetes", fontSize = 22.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(16.dp))
 
             // Subheading 2.1
-            Text(text = "Type 1 Diabetes", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = "Type 1 Diabetes", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
@@ -95,7 +90,7 @@ fun Symptoms() {
             )
 
             // Subheading 2.2
-            Text(text = "\nType 2 Diabetes", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = "\nType 2 Diabetes", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
@@ -105,7 +100,7 @@ fun Symptoms() {
             )
 
             // Subheading 2.3
-            Text(text = "\nGestational diabetes", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = "\nGestational diabetes", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
@@ -115,7 +110,7 @@ fun Symptoms() {
             )
 
             // Subheading 2.4
-            Text(text = "\nSome other diabetes", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = "\nSome other diabetes", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(8.dp))
 
             // Clickable text for MODY
@@ -123,7 +118,7 @@ fun Symptoms() {
                 text = AnnotatedString("Maturity onset diabetes of the young (MODY)\n"),
                 style = LocalTextStyle.current.copy(fontSize = 18.sp, color = MaterialTheme.colorScheme.primary),
                 onClick = {
-                    // Open MODY page in browser
+
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.diabetes.org.uk/about-diabetes/other-types-of-diabetes/mody"))
                     context.startActivity(intent)
                 }
@@ -134,7 +129,7 @@ fun Symptoms() {
                 text = AnnotatedString("Neonatal diabetes\n"),
                 style = LocalTextStyle.current.copy(fontSize = 18.sp, color = MaterialTheme.colorScheme.primary),
                 onClick = {
-                    // Open MODY page in browser
+
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.diabetes.org.uk/about-diabetes/other-types-of-diabetes/neonatal-diabetes"))
                     context.startActivity(intent)
                 }
@@ -145,7 +140,7 @@ fun Symptoms() {
                 text = AnnotatedString("Wolfram Syndrome\n"),
                 style = LocalTextStyle.current.copy(fontSize = 18.sp, color = MaterialTheme.colorScheme.primary),
                 onClick = {
-                    // Open MODY page in browser
+
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.diabetes.org.uk/about-diabetes/other-types-of-diabetes/wolfram-syndrome"))
                     context.startActivity(intent)
                 }
@@ -156,7 +151,7 @@ fun Symptoms() {
                 text = AnnotatedString("Alström Syndrome\n"),
                 style = LocalTextStyle.current.copy(fontSize = 18.sp, color = MaterialTheme.colorScheme.primary),
                 onClick = {
-                    // Open MODY page in browser
+
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.diabetes.org.uk/about-diabetes/other-types-of-diabetes/alstrom-syndrome"))
                     context.startActivity(intent)
                 }
@@ -167,7 +162,7 @@ fun Symptoms() {
                 text = AnnotatedString("Latent Autoimmune diabetes in Adults (LADA)\n"),
                 style = LocalTextStyle.current.copy(fontSize = 18.sp, color = MaterialTheme.colorScheme.primary),
                 onClick = {
-                    // Open MODY page in browser
+
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.diabetes.org.uk/about-diabetes/other-types-of-diabetes/latent-autoimmune-diabetes"))
                     context.startActivity(intent)
                 }
@@ -178,7 +173,7 @@ fun Symptoms() {
                 text = AnnotatedString("Type 3c diabetes\n"),
                 style = LocalTextStyle.current.copy(fontSize = 18.sp, color = MaterialTheme.colorScheme.primary),
                 onClick = {
-                    // Open MODY page in browser
+
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.diabetes.org.uk/about-diabetes/other-types-of-diabetes/type3c-diabetes"))
                     context.startActivity(intent)
                 }
@@ -189,7 +184,7 @@ fun Symptoms() {
                 text = AnnotatedString("Steroid-induced diabetes\n"),
                 style = LocalTextStyle.current.copy(fontSize = 18.sp, color = MaterialTheme.colorScheme.primary),
                 onClick = {
-                    // Open MODY page in browser
+
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.diabetes.org.uk/about-diabetes/other-types-of-diabetes/steroid-induced-diabetes"))
                     context.startActivity(intent)
                 }
@@ -197,14 +192,58 @@ fun Symptoms() {
 
             // Clickable text for Cystic fibrosis diabetes
             ClickableText(
-                text = AnnotatedString("Cystic fibrosis diabetes"),
+                text = AnnotatedString("Cystic fibrosis diabetes\n"),
                 style = LocalTextStyle.current.copy(fontSize = 18.sp, color = MaterialTheme.colorScheme.primary),
                 onClick = {
-                    // Open MODY page in browser
+
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.diabetes.org.uk/about-diabetes/other-types-of-diabetes/cystic-fibrosis-diabetes"))
                     context.startActivity(intent)
                 }
             )
+        }
+    }
+}
+
+@Composable
+fun FruitNode(symptom: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .size(100.dp) // Adjust size as needed
+            .background(MaterialTheme.colorScheme.secondary, shape = CircleShape)
+            .padding(10.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = symptom,
+            color = MaterialTheme.colorScheme.onSecondary,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+fun SymptomsTreeLayout() {
+    val symptoms = listOf(
+        "Frequent Urination", "Increased Thirst", "Extreme Hunger",
+        "Unexplained Weight Loss", "Fatigue", "Blurred Vision",
+        "Slow-healing Sores", "Tingling in hands or feet", "Nausea and Vomiting"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        symptoms.chunked(3).forEach { row ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                row.forEach { symptom ->
+                    FruitNode(symptom = symptom)
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

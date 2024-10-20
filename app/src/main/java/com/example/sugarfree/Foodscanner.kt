@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -52,83 +53,87 @@ fun FoodScannerSimpleUI(navController: NavController) {
     val imageCapture = remember { ImageCapture.Builder().build() }
 
     RequestCameraPermission {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .background(Color(0xFFE3D4EA)) // Lavender background for the whole page
+                .padding(16.dp)
         ) {
-            TopAppBar(
-                title = { Text(text = "                  Food Scanner", color = Color.Black) },
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFFE3D4EA)),
-                modifier = Modifier.height(60.dp)
-            )
-
-            CameraPreview(
-                modifier = Modifier
-                    .size(200.dp)
-                    .padding(top = 70.dp)
-                    .background(Color.Gray),
-                imageCapture = imageCapture
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(text = "Recognized Text:", modifier = Modifier.padding(vertical = 8.dp))
-
-            // Box for Extracted Text with Dark Blue Background
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp)
-                    .background(Color(0xFFE3D4EA)) // Dark Blue Background
-                    .padding(16.dp)
+            Column(
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (recognizedText.isNotEmpty()) {
-                    val sugarKeywords = listOf("glucose", "sugar", "fructose", "sucrose", "maltose", "dextrose", "syrup")
+               /* TopAppBar(
+                    title = { Text(text = "Food Scanner", fontSize = 25  .sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSecondary) },
+                    colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0x7C0F0F3B)), // Lavender background for the top bar
+                    modifier = Modifier.height(60.dp)
+                )*/
+
+                CameraPreview(
+                    modifier = Modifier
+                        .size(250.dp)
+                        .padding(top = 70.dp)
+                        .background(Color.Gray),
+                    imageCapture = imageCapture
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(text = "Recognized Text:", modifier = Modifier.padding(vertical = 8.dp))
+
+                // Box for Extracted Text with Lavender Background
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp)
+                        .background(Color(0xFFE6E6FA)) // Lavender Background for the text area
+                        .padding(16.dp)
+                ) {
+                    if (recognizedText.isNotEmpty()) {
+                        val sugarKeywords = listOf("glucose", "sugar", "fructose", "sucrose", "maltose", "dextrose", "syrup")
+                        Text(
+                            text = highlightSugars(recognizedText, sugarKeywords),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Justify, // Justify text
+                            color = Color.Black, // Black text for readability
+                            lineHeight = 54.sp // Adjust line height
+                        )
+                    } else {
+                        Text(
+                            text = "No text recognized yet",
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center,
+                            color = Color.Black // Changed to Black for visibility
+                        )
+                    }
+                }
+
+                Text(text = "Hidden Sugars:")
+                if (hiddenSugars.isNotEmpty()) {
                     Text(
-                        text = highlightSugars(recognizedText, sugarKeywords),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Justify, // Justify text
-                        color = Color.Black, // White text for readability
-                        lineHeight = 54.sp // Adjust line height
+                        text = hiddenSugars.joinToString(", "),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Red
                     )
                 } else {
-                    Text(
-                        text = "             No text recognized yet",
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
-                        color = Color.White
-                    )
+                    Text(text = "No hidden sugars found.", style = MaterialTheme.typography.bodyMedium)
                 }
-            }
 
-            Text(text = "Hidden Sugars:")
-            if (hiddenSugars.isNotEmpty()) {
-                Text(
-                    text = hiddenSugars.joinToString(", "),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Red
-                )
-            } else {
-                Text(text = "No hidden sugars found.", style = MaterialTheme.typography.bodyMedium)
-            }
-
-            Button(onClick = {
-                captureAndRecognizeText(context, imageCapture) { text ->
-                    recognizedText = text
-                    hiddenSugars = findHiddenSugars(text)
+                Button(onClick = {
+                    captureAndRecognizeText(context, imageCapture) { text ->
+                        recognizedText = text
+                        hiddenSugars = findHiddenSugars(text)
+                    }
+                }) {
+                    Text(text = "Scan Food Label")
                 }
-            }) {
-                Text(text = "Scan Food Label")
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                FoodScannerBottomNavigationBar(navController)
             }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            FoodScannerBottomNavigationBar(navController)
         }
     }
 }

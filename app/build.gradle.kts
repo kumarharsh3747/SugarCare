@@ -86,6 +86,8 @@ dependencies {
 
     // Generative AI Library
     implementation(libs.generativeai)
+    implementation(libs.androidx.datastore.core.android)
+    implementation(libs.engage.core)
 
     // Testing Dependencies
     testImplementation(libs.junit)
@@ -214,7 +216,15 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation("com.google.firebase:firebase-analytics")
 
+    implementation("androidx.compose.foundation:foundation-layout:1.0.0")
+
+    implementation ("androidx.compose.ui:ui:1.5.0")
+    implementation ("androidx.compose.material3:material3:1.2.0") // Use Material 3
+    implementation ("androidx.navigation:navigation-compose:2.7.0")
+    implementation ("io.coil-kt:coil-compose:2.3.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0") // For ViewModel support
+
+
 
 
 }
-
