@@ -15,6 +15,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -247,16 +251,36 @@ fun highlightSugars(text: String, keywords: List<String>): AnnotatedString {
 
 @Composable
 fun FoodScannerBottomNavigationBar(navController: NavController) {
-    BottomAppBar {
-        IconButton(onClick = { navController.navigate("Home") }) {
-            Icon(Icons.Default.Home, contentDescription = "Home")
+    BottomAppBar(
+        containerColor = MaterialTheme.colorScheme.primary,
+        content = {
+            Spacer(modifier = Modifier.weight(1f, true))
+
+            IconButton(onClick = { navController.navigate("foodScanner") }) {
+                Icon(imageVector = Icons.Default.Search, contentDescription = "Food Scanner")
+            }
+
+            Spacer(modifier = Modifier.weight(1f, true))
+
+            IconButton(onClick = { navController.navigate("ecommerce") }) {
+                Icon(imageVector = Icons.Rounded.ShoppingCart, contentDescription = "ecommerce")
+            }
+
+            Spacer(modifier = Modifier.weight(1f, true))
+
+            IconButton(onClick = { navController.navigate("home") }) {
+                Icon(imageVector = Icons.Rounded.Home, contentDescription = "Home")
+            }
+
+            Spacer(modifier = Modifier.weight(1f, true))
+
+            IconButton(onClick = { navController.navigate("fruitlist") }) {
+                Icon(imageVector = Icons.Rounded.Info, contentDescription = "Fruit List")
+            }
+
+            Spacer(modifier = Modifier.weight(1f, true))
+
+
         }
-        IconButton(onClick = { navController.navigate("detox") }) {
-            Image(
-                painter = painterResource(id = R.drawable.cart),
-                contentDescription = "Profile",
-                modifier = Modifier.size(24.dp)
-            )
-        }
-    }
+    )
 }

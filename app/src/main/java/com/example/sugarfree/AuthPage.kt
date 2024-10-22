@@ -265,9 +265,10 @@ fun SignupPage(navController: NavController, onSwitchToLogin: () -> Unit) {
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(emailInput, passwordInput)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                navController.navigate("home") // Navigate to Home Page on success
+//                                navController.navigate("home") // Navigate to Home Page on success
+                                Toast.makeText(context, "Signup Successful", Toast.LENGTH_LONG).show()
                             } else {
-                                Toast.makeText(context, "Signup failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, "Signup failed ", Toast.LENGTH_LONG).show()
                             }
                         }
                 },

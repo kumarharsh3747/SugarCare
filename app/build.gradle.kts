@@ -9,7 +9,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.sugarfree"
+        applicationId = "com.example.sugarCare"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -88,6 +88,7 @@ dependencies {
     implementation(libs.generativeai)
     implementation(libs.androidx.datastore.core.android)
     implementation(libs.engage.core)
+    implementation(libs.firebase.common.ktx)
 
     // Testing Dependencies
     testImplementation(libs.junit)
@@ -161,6 +162,8 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+    implementation(platform("com.google.firebase:firebase-bom:33.5.0"))
+    implementation("com.google.firebase:firebase-analytics")
 
 
     dependencies {
@@ -223,7 +226,8 @@ dependencies {
     implementation ("androidx.navigation:navigation-compose:2.7.0")
     implementation ("io.coil-kt:coil-compose:2.3.0")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0") // For ViewModel support
-
+    implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc01")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0-rc01")
 
 
 

@@ -1,15 +1,19 @@
 package com.example.sugarfree
 
+
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
+
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Info
+
+import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,19 +22,34 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.google.ai.client.generativeai.Chat
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.delay
+import org.checkerframework.checker.units.qual.Current
+
+
+private lateinit var auth: FirebaseAuth
+// ...
+// Initialize Firebase Auth
 
 @Composable
 fun Home(navController: NavController) {
     val image1 = painterResource(id = R.drawable.image1)
     val image2 = painterResource(id = R.drawable.image2)
     val image3 = painterResource(id = R.drawable.image3)
+
+
+    auth = Firebase.auth
+
 
     Scaffold(
         topBar = { AppBar3(navController) },
@@ -46,18 +65,18 @@ fun Home(navController: NavController) {
             }
         },
         bottomBar = { BottomNavigationBar(navController) },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate("healthMonitor") },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Chat,
-                    contentDescription = "Health Monitor",
-                    tint = MaterialTheme.colorScheme.onSecondary
-                )
-            }
-        }
+//        floatingActionButton = {
+//            FloatingActionButton(
+//                onClick = { navController.navigate("healthMonitor") },
+//                modifier = Modifier.padding(16.dp)
+//            ) {
+//                Icon(
+//                    imageVector = Icons.Filled.Chat,
+//                    contentDescription = "Health Monitor",
+//                    tint = MaterialTheme.colorScheme.onSecondary
+//                )
+//            }
+//        }
     )
 }
 
@@ -74,23 +93,25 @@ fun BottomNavigationBar(navController: NavController) {
 
             Spacer(modifier = Modifier.weight(1f, true))
 
-            IconButton(onClick = { navController.navigate("detox") }) {
-                Icon(imageVector = Icons.Default.Menu, contentDescription = "Detox")
-            }
-
-            Spacer(modifier = Modifier.weight(1f, true))
-
-            IconButton(onClick = { navController.navigate("fruitlist") }) {
-                Icon(imageVector = Icons.Default.Home, contentDescription = "Fruit List")
+            IconButton(onClick = { navController.navigate("ecommerce") }) {
+                Icon(imageVector = Icons.Rounded.ShoppingCart, contentDescription = "ecommerce")
             }
 
             Spacer(modifier = Modifier.weight(1f, true))
 
             IconButton(onClick = { navController.navigate("home") }) {
-                Icon(imageVector = Icons.Default.Home, contentDescription = "Home")
+                Icon(imageVector = Icons.Rounded.Home, contentDescription = "Home")
             }
 
             Spacer(modifier = Modifier.weight(1f, true))
+
+            IconButton(onClick = { navController.navigate("fruitlist") }) {
+                Icon(imageVector = Icons.Rounded.Info, contentDescription = "Fruit List")
+            }
+
+            Spacer(modifier = Modifier.weight(1f, true))
+
+
         }
     )
 }
@@ -139,18 +160,18 @@ fun InfiniteLoopedImageBox(
 
         Row(
             modifier = Modifier
-                .fillMaxWidth()
+//                .fillMaxWidth()
                 .horizontalScroll(rememberScrollState())
                 .padding(vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(width = 150.dp, height = 150.dp)
+                    .size(width = 200.dp, height = 200.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color.White)
-                    .clickable { navController.navigate("c") }
-                    .padding(8.dp),
+                    .clickable { navController.navigate(route = "detox") }
+                    .padding(8.dp)
+                    ,
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -158,38 +179,109 @@ fun InfiniteLoopedImageBox(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.sc),
+                        painter = painterResource(id = R.drawable.timer),
                         contentDescription = "Box Image",
-                        modifier = Modifier.size(100.dp, 100.dp)
+                        modifier = Modifier
+                            .size(150.dp, 150.dp)
+
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Sugar Free\nonly at ₹99",
-                        color = Color.Black,
+                        text = "DetoxTimer",
+                        color = Color(103, 80, 164),
                         textAlign = TextAlign.Center
                     )
                 }
+
+
+            }
+        }
+
+
+
+        Row(
+            modifier = Modifier
+//                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(width = 200.dp, height = 200.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { navController.navigate(route = "healthMonitor") }
+                    .padding(8.dp)
+                ,
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.health),
+                        contentDescription = "Box Image",
+                        modifier = Modifier
+                            .size(150.dp, 150.dp)
+
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "Health Monitor",
+                        color = Color(103, 80, 164),
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+
             }
         }
     }
 }
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar3(navController: NavController) {
-    TopAppBar(
-        title = { Text(text = "Welcome") },
-        navigationIcon = {
-            Box(modifier = Modifier.padding(start = 8.dp)) {
-                Image(
-                    painter = painterResource(id = R.drawable.user),
-                    contentDescription = "Profile Picture",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .clickable { navController.navigate("auth") } // Navigate to AuthPage for login/signup
-                )
+    val currentUser = auth.currentUser
+
+     if(currentUser==null)
+     {
+         TopAppBar(
+             title = { Text(text = "Login") },
+             navigationIcon = {
+                 Box(modifier = Modifier.padding(start = 8.dp)) {
+                     Image(
+                         painter = painterResource(id = R.drawable.user),
+                         contentDescription = "Profile Picture",
+                         modifier = Modifier
+                             .size(40.dp)
+                             .clip(CircleShape)
+                             .clickable { navController.navigate("auth") } // Navigate to AuthPage for login/signup
+                     )
+                 }
+             }
+         )
+     }
+    else
+    {
+        TopAppBar(
+            title = { Text(text = "Welcome") },
+            navigationIcon = {
+                Box(modifier = Modifier.padding(start = 8.dp)) {
+                    Image(
+                        painter = painterResource(id = R.drawable.user),
+                        contentDescription = "Profile Picture",
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .clickable { navController.navigate("profile") } // Navigate to AuthPage for login/signup
+                    )
+                }
             }
-        }
-    )
+        )
+
+    }
 }

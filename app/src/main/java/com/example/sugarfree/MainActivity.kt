@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
                     FoodScannerSimpleUI(navController)
                 }
                 composable("detox") {
-                    ECommercePage(navController, cartViewModel) // Pass the cartViewModel here
+                    DetoxTimerPage(navController) // Pass the cartViewModel here
                 }
                 composable("fruitlist") {
                     Home2(navController)
@@ -52,6 +52,13 @@ class MainActivity : ComponentActivity() {
                 }
                 composable("cart") {
                     CartScreen(navController) // Pass the navController here
+                }
+                composable("ecommerce") {
+                    ECommercePage(navController,cartViewModel) // Pass the navController here
+                }
+
+                composable("profile") {
+                    ProfileScreen(navController) // Pass the navController here
                 }
 
                 composable("placeOrder") {

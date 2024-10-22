@@ -14,6 +14,9 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -46,31 +49,31 @@ fun Home2(navController: NavController) {
                     content = {
                         Spacer(modifier = Modifier.weight(1f, true))
 
-                        // Food Scanner Icon Button
                         IconButton(onClick = { navController.navigate("foodScanner") }) {
-                            Icon(imageVector = Icons.Default.Search, contentDescription = "foodScanner")
+                            Icon(imageVector = Icons.Default.Search, contentDescription = "Food Scanner")
                         }
 
                         Spacer(modifier = Modifier.weight(1f, true))
 
-                        // Detox Icon Button (First)
-                        IconButton(onClick = { navController.navigate("detox") }) {
-                            Icon(imageVector = Icons.Default.Menu, contentDescription = "detox")
+                        IconButton(onClick = { navController.navigate("ecommerce") }) {
+                            Icon(imageVector = Icons.Rounded.ShoppingCart, contentDescription = "ecommerce")
                         }
 
                         Spacer(modifier = Modifier.weight(1f, true))
 
-                        // Detox Icon Button (Second)
+                        IconButton(onClick = { navController.navigate("home") }) {
+                            Icon(imageVector = Icons.Rounded.Home, contentDescription = "Home")
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f, true))
+
                         IconButton(onClick = { navController.navigate("fruitlist") }) {
-                            Icon(imageVector = Icons.Default.Info, contentDescription = "fruitlist")
+                            Icon(imageVector = Icons.Rounded.Info, contentDescription = "Fruit List")
                         }
 
                         Spacer(modifier = Modifier.weight(1f, true))
-                        IconButton(onClick = { navController.navigate("fruitlist") }) {
-                            Icon(imageVector = Icons.Default.Home, contentDescription = "fruitlist")
-                        }
 
-                        Spacer(modifier = Modifier.weight(1f, true))
+
                     }
                 )
             },
