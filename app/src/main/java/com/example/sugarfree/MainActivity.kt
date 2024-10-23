@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
                     ECommercePage(navController, cartViewModel) // Pass the navController and CartViewModel here
                 }
                 composable("profile") {
-                    ProfileScreen(navController) // Pass the navController here
+                    ProfilePage(navController) // Pass the navController here
                 }
                 composable("placeOrder") {
                     PlaceOrderPage(cartViewModel.cartItems, onBack = { navController.popBackStack() }) {
