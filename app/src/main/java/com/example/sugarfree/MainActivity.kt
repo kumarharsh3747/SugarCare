@@ -14,6 +14,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sugarfree.ui.theme.SugarFreeTheme
 import com.google.firebase.FirebaseApp
+import android.app.Application
+
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,5 +89,14 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 fun GreetingPreview() {
     SugarFreeTheme {
         Greeting("Android")
+    }
+}
+
+
+
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        FirebaseApp.initializeApp(this)
     }
 }
