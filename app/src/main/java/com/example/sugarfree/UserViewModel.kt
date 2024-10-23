@@ -1,19 +1,23 @@
 package com.example.sugarfree
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.compose.runtime.mutableStateOf
 
 class UserViewModel : ViewModel() {
+    // Mutable state for tracking whether the user is logged in
     var isLoggedIn = mutableStateOf(false)
-    var userId = mutableStateOf("")
 
-    fun login(userId: String) {
-        this.userId.value = userId
+    // Function to update login status (you can use Firebase/Auth APIs)
+    fun login() {
         isLoggedIn.value = true
     }
 
     fun logout() {
-        userId.value = ""
         isLoggedIn.value = false
+    }
+
+    // Check if user is logged in
+    fun checkLoginStatus(): Boolean {
+        return isLoggedIn.value
     }
 }

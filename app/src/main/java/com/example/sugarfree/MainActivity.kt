@@ -13,11 +13,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sugarfree.ui.theme.SugarFreeTheme
+import com.google.firebase.FirebaseApp
+import android.app.Application
+
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()  // Assuming this is a custom function you implemented
+        FirebaseApp.initializeApp(this) // Initialize Firebase
+        enableEdgeToEdge() // Assuming this is a custom function you implemented
+
         setContent {
             val navController = rememberNavController()
             val cartViewModel: CartViewModel = viewModel() // Create an instance of CartViewModel
@@ -33,7 +39,7 @@ class MainActivity : ComponentActivity() {
                     FoodScannerSimpleUI(navController)
                 }
                 composable("detox") {
-                    DetoxTimerPage(navController) // Pass the cartViewModel here
+                    DetoxTimerPage(navController) // Pass the cartViewModel here if needed
                 }
                 composable("fruitlist") {
                     Home2(navController)
@@ -51,24 +57,20 @@ class MainActivity : ComponentActivity() {
                     BloodSugarChecker(navController)
                 }
                 composable("cart") {
-                    CartScreen(navController) // Pass the navController here
+                    CartScreen(navController, cartViewModel) // Pass the navController here
                 }
                 composable("ecommerce") {
-                    ECommercePage(navController,cartViewModel) // Pass the navController here
+                    ECommercePage(navController, cartViewModel) // Pass the navController and CartViewModel here
                 }
-
                 composable("profile") {
                     ProfilePage(navController) // Pass the navController here
                 }
-
                 composable("placeOrder") {
                     PlaceOrderPage(cartViewModel.cartItems, onBack = { navController.popBackStack() }) {
                         // Handle the order placement logic here
                         cartViewModel.cartItems.clear() // Clear cart after placing the order
                     }
                 }
-
-
             }
         }
     }
@@ -87,5 +89,14 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 fun GreetingPreview() {
     SugarFreeTheme {
         Greeting("Android")
+    }
+}
+
+
+
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        FirebaseApp.initializeApp(this)
     }
 }

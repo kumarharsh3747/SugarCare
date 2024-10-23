@@ -12,5 +12,18 @@ class CartViewModel : ViewModel() {
         cartItems.add(product)
     }
 
-    // Optionally, you can add methods to remove items or clear the cart
+    // Function to remove products from the cart
+    fun removeFromCart(product: Product) {
+        cartItems.remove(product)
+    }
+
+    // Function to calculate the total price of items in the cart
+    fun getTotalPrice(): Double {
+        return cartItems.sumOf { it.price }
+    }
+
+    // Optionally, you can clear the cart
+    fun clearCart() {
+        cartItems.clear()
+    }
 }
