@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
                 composable("home") {
                     Home(navController) // Home composable with profile icon
                 }
-                composable("auth") {
+                composable("AuthPage") {
                     AuthPage(navController) // This handles both login and signup
                 }
                 composable("foodScanner") {

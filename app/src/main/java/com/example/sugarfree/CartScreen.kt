@@ -129,7 +129,7 @@ fun TotalPriceSection(cartViewModel: CartViewModel, navController: NavController
                         Log.d("CartScreen", "User is logged in, navigating to placeOrder.")
                     } else {
                         // User is not logged in, navigate to the login screen
-                        navController.navigate("authPage")
+                        navController.navigate("AuthPage")
                         Log.d("CartScreen", "User is not logged in, navigating to authPage.")
                     }
                 },
