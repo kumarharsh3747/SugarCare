@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 composable("profile") {
-                    ProfileScreen(navController) // Pass the navController here
+                    ProfilePage(navController) // Pass the navController here
                 }
 
                 composable("placeOrder") {
