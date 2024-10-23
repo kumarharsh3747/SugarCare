@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "655140471335",
+    "project_id": "sugarfree-df710",
+    "storage_bucket": "sugarfree-df710.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:655140471335:android:7a7f3ddd21e0016203c402",
+        "android_client_info": {
+          "package_name": "com.example.sugarCare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_oPJhLEuxFt0-5h_wf8ix_GIeaULnjyw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:655140471335:android:e324dc86bb0ad5fd03c402",
+        "android_client_info": {
+          "package_name": "com.example.sugarfree"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_oPJhLEuxFt0-5h_wf8ix_GIeaULnjyw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:655140471335:android:f3ae98ab1d7bcef203c402",
+        "android_client_info": {
+          "package_name": "com.harsh.SugarFree"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_oPJhLEuxFt0-5h_wf8ix_GIeaULnjyw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
