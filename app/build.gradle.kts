@@ -89,6 +89,9 @@ dependencies {
     implementation(libs.androidx.datastore.core.android)
     implementation(libs.engage.core)
     implementation(libs.firebase.common.ktx)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.crashlytics.buildtools)
 
     // Testing Dependencies
     testImplementation(libs.junit)
@@ -159,6 +162,8 @@ dependencies {
     implementation ("com.google.firebase:firebase-auth-ktx")
     implementation ("com.google.firebase:firebase-database-ktx")
     implementation ("androidx.core:core-ktx:1.7.0")
+    implementation ("com.google.firebase:firebase-firestore-ktx")
+    implementation ("com.google.firebase:firebase-storage-ktx")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
@@ -202,6 +207,8 @@ dependencies {
     implementation ("com.google.firebase:firebase-auth-ktx")
     implementation ("com.google.firebase:firebase-database-ktx")
     implementation ("androidx.core:core-ktx:1.7.0")
+    implementation ("com.google.firebase:firebase-firestore-ktx:24.4.2")
+
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")

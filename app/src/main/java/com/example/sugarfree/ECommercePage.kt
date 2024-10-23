@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
@@ -33,7 +34,8 @@ fun ECommercePage(navController: NavController, cartViewModel: CartViewModel) {
     var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
 
     val products = listOf(
-        Product(1, "Sugar-Free Gold+", 288.0, "https://example.com/gold.jpg"),
+        Product(1, "Sugar-Free Gold+", 288.0, "https://firebasestorage.googleapis.com/v0/b/sugarfree-df710.appspot.com/o/Sugar-Free%20Gold%2B.webp?alt=media&token=7ba63b2e-5703-4863-98af-75805053e0b6"),
+
         Product(2, "Sugar-Free Green Stevia", 221.0, "https://example.com/green.jpg"),
         Product(3, "Sugar-Free Natura", 149.0, "https://example.com/natura.jpg"),
         Product(4, "Sugar-Free Cake", 15.0, "https://example.com/cake.jpg"),
@@ -57,7 +59,7 @@ fun ECommercePage(navController: NavController, cartViewModel: CartViewModel) {
         TopAppBar(
             title = {
                 Text(
-                    text = "Sugar Free Store",
+                    text = "Store",
                     fontSize = 20.sp,
                     color = Color.White
                 )
@@ -79,6 +81,11 @@ fun ECommercePage(navController: NavController, cartViewModel: CartViewModel) {
                     BadgedBox(badge = { Badge { Text(cartViewModel.cartItems.size.toString()) } }) {
                         Icon(Icons.Filled.ShoppingCart, contentDescription = "Cart")
                     }
+                }
+            },
+            navigationIcon = {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             },
             colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFF734F96))
