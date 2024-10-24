@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.sugarCare"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -77,6 +77,8 @@ dependencies {
     implementation ("androidx.camera:camera-lifecycle:1.2.3")
     implementation ("androidx.camera:camera-view:1.3.0")
     implementation ("com.google.mlkit:text-recognition:16.0.0")
+    implementation ("com.opencsv:opencsv:5.5.2")
+    implementation ("com.jakewharton.threetenabp:threetenabp:1.3.1")
 
     // ML Kit for Text Recognition
     implementation("com.google.mlkit:text-recognition:16.0.0")
@@ -89,6 +91,7 @@ dependencies {
     implementation(libs.androidx.datastore.core.android)
     implementation(libs.engage.core)
     implementation(libs.firebase.common.ktx)
+    implementation(libs.firebase.firestore.ktx)
 
     // Testing Dependencies
     testImplementation(libs.junit)

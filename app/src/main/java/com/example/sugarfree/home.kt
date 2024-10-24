@@ -28,13 +28,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import com.google.ai.client.generativeai.Chat
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.delay
-import org.checkerframework.checker.units.qual.Current
 
 
 private lateinit var auth: FirebaseAuth
@@ -43,9 +40,9 @@ private lateinit var auth: FirebaseAuth
 
 @Composable
 fun Home(navController: NavController) {
-    val image1 = painterResource(id = R.drawable.image1)
-    val image2 = painterResource(id = R.drawable.image2)
-    val image3 = painterResource(id = R.drawable.image3)
+    val image1 = painterResource(id = R.drawable.image5)
+    val image2 = painterResource(id = R.drawable.image6)
+    val image3 = painterResource(id = R.drawable.image7)
 
 
     auth = Firebase.auth
@@ -79,43 +76,6 @@ fun Home(navController: NavController) {
 //        }
     )
 }
-
-@Composable
-fun BottomNavigationBar(navController: NavController) {
-    BottomAppBar(
-        containerColor = MaterialTheme.colorScheme.primary,
-        content = {
-            Spacer(modifier = Modifier.weight(1f, true))
-
-            IconButton(onClick = { navController.navigate("foodScanner") }) {
-                Icon(imageVector = Icons.Default.Search, contentDescription = "Food Scanner")
-            }
-
-            Spacer(modifier = Modifier.weight(1f, true))
-
-            IconButton(onClick = { navController.navigate("ecommerce") }) {
-                Icon(imageVector = Icons.Rounded.ShoppingCart, contentDescription = "ecommerce")
-            }
-
-            Spacer(modifier = Modifier.weight(1f, true))
-
-            IconButton(onClick = { navController.navigate("home") }) {
-                Icon(imageVector = Icons.Rounded.Home, contentDescription = "Home")
-            }
-
-            Spacer(modifier = Modifier.weight(1f, true))
-
-            IconButton(onClick = { navController.navigate("fruitlist") }) {
-                Icon(imageVector = Icons.Rounded.Info, contentDescription = "Fruit List")
-            }
-
-            Spacer(modifier = Modifier.weight(1f, true))
-
-
-        }
-    )
-}
-
 
 @Composable
 fun InfiniteLoopedImageBox(

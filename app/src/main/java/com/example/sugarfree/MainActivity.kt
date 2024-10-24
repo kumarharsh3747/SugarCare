@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
 
             NavHost(navController = navController, startDestination = "home") { // Start with home
                 composable("home") {
-                    Home(navController) // Home composable with profile icon
+                    MainScreen(navController) // Home composable with profile icon
                 }
                 composable("auth") {
                     AuthPage(navController) // This handles both login and signup
@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                     DetoxTimerPage(navController) // Pass the cartViewModel here
                 }
                 composable("fruitlist") {
-                    Home2(navController)
+                    FruitAppScreen(navController)
                 }
                 composable("healthMonitor") {
                     HealthMonitor(navController)
@@ -53,12 +53,29 @@ class MainActivity : ComponentActivity() {
                 composable("cart") {
                     CartScreen(navController) // Pass the navController here
                 }
-                composable("ecommerce") {
-                    ECommercePage(navController,cartViewModel) // Pass the navController here
-                }
+               composable("ecommerce") {
+                  ECommercePage(navController,cartViewModel) // Pass the navController here
+            }
 
                 composable("profile") {
                     ProfileScreen(navController) // Pass the navController here
+                }
+                composable("challanges") {
+                    challanges(navController) // Pass the navController here
+                }
+                composable("details1") {
+                    HealthTipsScreen(navController) // Pass the navController here
+                }
+                composable("details2") {
+                    HealthTipsScreen2(navController) // Pass the navController here
+                }
+                composable("details3") {
+                    HealthTipsScreen3(navController) // Pass the navController here
+                }
+
+                composable("fruitDetails/{fruitName}") { backStackEntry ->
+                    val fruitName = backStackEntry.arguments?.getString("fruitName") ?: ""
+                    FruitDetailsScreen(fruitName)
                 }
 
                 composable("placeOrder") {
