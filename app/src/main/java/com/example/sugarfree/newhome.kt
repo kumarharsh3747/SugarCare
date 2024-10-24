@@ -3,13 +3,16 @@ package com.example.sugarfree
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -23,6 +26,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,9 +36,18 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.*
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 @Composable
 fun MainScreen(navController: NavController) {
+    // Create a scroll state to manage the scroll position
+    val scrollState = rememberScrollState()
+
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController)
@@ -44,17 +57,208 @@ fun MainScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it) // Adjust the padding to ensure the bottom bar is accounted for
-                .background(Color(0xFFF5E6C9)),
+                .background(Color(0xFFF5E6C9))
+                .verticalScroll(scrollState), // Enable scrolling
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(30.dp))
+
+            // Dynamic Calendar Section (if applicable)
             DynamicCalendarSection()
+
             Spacer(modifier = Modifier.height(25.dp))
+
+            // Middle Box Section (use your specific section code here)
             MiddleBoxSection(navController)
+
             Spacer(modifier = Modifier.height(60.dp))
+
+            // Water Tracker Section
             WaterTrackerSection()
+
+            Spacer(modifier = Modifier.height(60.dp))
+
+            // Detox button section
+            detoxsButton(navController)
+
+            Spacer(modifier = Modifier.height(60.dp))
+
+            // Add the graph image with animation
+            GraphImageWithAnimation()
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            // 5 Tips to Succeed Section
+            TipsToSucceedSection()
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            // Benefits and What to Do Section
+            BenefitsAndWhatToDoSection()
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            // What Can I Eat Section
+            WhatCanIEatSection()
+
+            Spacer(modifier = Modifier.height(60.dp))
         }
+    }
+}
+
+@Composable
+fun TipsToSucceedSection() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "5 Tips to Succeed",
+           // style = MaterialTheme.typography.h6,
+            color = Color.Black
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Display tips with numbers and descriptions
+        for (i in 1..5) {
+            Text(
+                text = "$i. ${getTipText(i)}",
+               // style = MaterialTheme.typography.body1,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+    }
+}
+
+fun getTipText(i: Int): String {
+    return when (i) {
+        1 -> "Drink Water. Six (12 ounce) glasses each day, or 2.2L. Try adding sliced berries, citrus slices, or mint leaves for flavor."
+        2 -> "Eat Fruit. Fruit contains plenty of natural sugars and is also an important part of any healthy eating plan."
+        3 -> "Get your Fiber! Vegetables, fruits, nuts, seeds, and legumes are great sources of fiber."
+        4 -> "Make Home-Cooked Meals. Pre-packaged food is higher in salt, fat, and sugar. Preparing meals at home gives you control."
+        5 -> "Explore Flavors. Try adding herbs and spices to your food to ignite your taste buds!"
+        else -> ""
+    }
+}
+
+@Composable
+fun BenefitsAndWhatToDoSection() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Display the "Benefits" text section
+        Text(
+            text = "Benefits",
+           // style = MaterialTheme.typography.h6,
+            color = Color.Black
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Display the benefits list
+        val benefits = listOf(
+            "🏋️ Fat loss",
+            "🧠 Mental focus and better mood, thanks to decreased brain inflammation.",
+            "🥗 Decreased hunger and food cravings.",
+            "🚴 All-day energy with no crash, thanks to stable blood sugar."
+        )
+        benefits.forEach { benefit ->
+            Text(
+                text = benefit,
+               // style = MaterialTheme.typography.body1,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        // Display the "What to Do" text section
+        Text(
+            text = "What to Do",
+           // style = MaterialTheme.typography.h6,
+            color = Color.Black
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Display the advice about cutting out sugar
+        Text(
+            text = "Avoid all refined sugars including white sugar, corn syrup, and brown sugar...",
+            //style = MaterialTheme.typography.body1,
+            color = Color.Black
+        )
+    }
+}
+
+@Composable
+fun WhatCanIEatSection() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Display "What Can I Eat" title
+        Text(
+            text = "What Can I Eat",
+            //style = MaterialTheme.typography.h6,
+            color = Color.Black
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Display food items using icons and text
+        val foodItems = listOf(
+            "🥩 Grass-fed Beef",
+            "🐟 Wild Salmon",
+            "🥓 Bacon",
+            "🥚 Eggs",
+            "🥑 Avocados",
+            "🌰 Raw Nuts",
+            "🫒 Olive Oil",
+            "🥥 Coconut Oil",
+            "🥦 Low-Carb Veggies"
+        )
+
+        foodItems.forEach { foodItem ->
+            Text(
+                text = foodItem,
+                //style = MaterialTheme.typography.body1,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+}
+
+@Composable
+fun GraphImageWithAnimation() {
+    var isVisible by remember { mutableStateOf(false) }
+
+    // Trigger visibility change after a delay to simulate animation
+    LaunchedEffect(Unit) {
+        isVisible = true
+    }
+
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = expandVertically(animationSpec = tween(durationMillis = 1000)) // Slide animation
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.graph), // Replace with your graph image resource
+            contentDescription = "Diabetes Projection Graph",
+            modifier = Modifier
+                .height(300.dp)
+                .fillMaxWidth()
+                .padding(16.dp),
+            contentScale = ContentScale.Fit
+        )
     }
 }
 
@@ -188,6 +392,30 @@ fun AddFoodsButton(navController: NavController) {
     }
 }
 
+
+@Composable
+fun detoxsButton(navController: NavController) {
+    Button(
+        onClick = { navController.navigate("detox") },
+        modifier = Modifier
+//            .padding(start = 8.dp)
+            .size(200.dp, 150.dp),
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFF5E6C9))
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+            painter = painterResource(id = R.drawable.timer),
+            contentDescription = "Box Image",
+            modifier = Modifier
+                .size(200.dp, 200.dp)
+
+        )
+        }
+    }
+}
 @Composable
 fun CheckInButton(navController: NavController) {
     Button(

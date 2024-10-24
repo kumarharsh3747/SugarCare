@@ -51,14 +51,14 @@ class MainActivity : ComponentActivity() {
                     BloodSugarChecker(navController)
                 }
                 composable("cart") {
-                    CartScreen(navController) // Pass the navController here
+                    CartScreen(navController, cartViewModel) // Pass the navController here
                 }
                composable("ecommerce") {
                   ECommercePage(navController,cartViewModel) // Pass the navController here
             }
 
                 composable("profile") {
-                    ProfileScreen(navController) // Pass the navController here
+                    ProfilePage(navController) // Pass the navController here
                 }
                 composable("challanges") {
                     challanges(navController) // Pass the navController here

@@ -131,11 +131,13 @@ fun FruitRow(fruit: FruitNutritionalInfo, navController: NavController) {
         )
     }
 }
-
 @Composable
 fun NutritionalInfoDisplay(fruit: FruitNutritionalInfo) {
     val context = LocalContext.current
     val imageResId = context.resources.getIdentifier(fruit.imageFilename, "drawable", context.packageName)
+
+    // Create a scroll state for vertical scrolling
+    val scrollState = rememberScrollState()
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -147,7 +149,8 @@ fun NutritionalInfoDisplay(fruit: FruitNutritionalInfo) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(16.dp)
+                .verticalScroll(scrollState), // Enable scrolling
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Display fruit image

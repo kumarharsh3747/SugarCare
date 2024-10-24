@@ -1,5 +1,8 @@
 package com.example.sugarfree
 
+
+
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,17 +20,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+
+private lateinit var auth: FirebaseAuth
 
 
 @Composable
-fun ProfilePage(userName: String,navController: NavController) {
+fun ProfilePage(navController: NavController) {
+    auth = Firebase.auth
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -37,7 +44,7 @@ fun ProfilePage(userName: String,navController: NavController) {
     ) {
         // Profile picture
         Image(
-            painter = painterResource(id = R.drawable.sc),
+            painter = painterResource(id = R.drawable.user),
             contentDescription = "Profile Picture",
             modifier = Modifier
                 .size(120.dp)
@@ -45,19 +52,21 @@ fun ProfilePage(userName: String,navController: NavController) {
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+        val currentUser = (auth.currentUser)?.email
 
-        // User name
-        Text(
-            text = userName,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
+        if (currentUser != null) {
+            Text(
+                text = currentUser,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
         // User bio (You can fetch user bio from Firebase as well)
         Text(
-            text = "Dear Customer",
+            text = "Health Enthusiast",
             fontSize = 18.sp,
             color = Color.Gray
         )
@@ -74,8 +83,15 @@ fun ProfilePage(userName: String,navController: NavController) {
             Text(text = "Edit Profile")
 
         }
-        Button(onClick = { navController.navigate("login") }) {
+        Button(onClick = { func(navController=navController) }){
+
             Text(text = "Logout")}
     }
 }
 
+
+fun func(navController:NavController): () -> Unit {
+    navController.navigate(route = "home")
+    auth.signOut()
+    return { }
+}

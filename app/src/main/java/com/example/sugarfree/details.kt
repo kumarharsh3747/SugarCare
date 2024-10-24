@@ -138,17 +138,17 @@ fun HealthTipsScreen(navController: NavController) {
         }
 
         // Start button
-        Button(
-            onClick = {
-                // Handle button click logic here
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EA))
-        ) {
-            Text(text = "🚀 START NOW", color = Color.White)
-        }
+//        Button(
+//            onClick = {
+//                // Handle button click logic here
+//            },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(vertical = 8.dp),
+//            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EA))
+//        ) {
+//            Text(text = "🚀 START NOW", color = Color.White)
+//        }
     }
 }
 
@@ -269,17 +269,17 @@ fun HealthTipsScreen2(navController: NavController) {
         Spacer(modifier = Modifier.height(24.dp))
 
         // Start Now button
-        Button(
-            onClick = {
-                // Handle start now click
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EA))
-        ) {
-            Text(text = "🚀 START NOW", color = Color.White)
-        }
+//        Button(
+//            onClick = {
+//                // Handle start now click
+//            },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(vertical = 8.dp),
+//            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EA))
+//        ) {
+//            Text(text = "🚀 START NOW", color = Color.White)
+//        }
     }
 }
 
@@ -397,17 +397,17 @@ fun HealthTipsScreen3(navController: NavController) {
             }
         }
 
-        // Start button
-        Button(
-            onClick = {
-                // Handle button click logic here
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EA))
-        ) {
-            Text(text = "🚀 START NOW", color = Color.White)
-        }
+//        // Start button
+//        Button(
+//            onClick = {
+//                // Handle button click logic here
+//            },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(vertical = 8.dp),
+//            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EA))
+//        ) {
+//            Text(text = "🚀 START NOW", color = Color.White)
+//        }
     }
 }
