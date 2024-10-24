@@ -43,8 +43,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.runtime.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+
+private lateinit var auth: FirebaseAuth
 @Composable
 fun MainScreen(navController: NavController) {
+    auth = Firebase.auth
     // Create a scroll state to manage the scroll position
     val scrollState = rememberScrollState()
 
@@ -215,7 +221,7 @@ fun WhatCanIEatSection() {
 
         // Display food items using icons and text
         val foodItems = listOf(
-            "🥩 Grass-fed Beef",
+
             "🐟 Wild Salmon",
             "🥓 Bacon",
             "🥚 Eggs",
@@ -517,7 +523,7 @@ fun BottomNavigationBar(navController: NavController) {
 
             Spacer(modifier = Modifier.weight(1f, true))
 
-            androidx.compose.material3.IconButton(onClick = { navController.navigate("profile") }) {
+            androidx.compose.material3.IconButton(onClick = { func1 (navController=navController) }) {
                 androidx.compose.material3.Icon(
                     imageVector = Icons.Rounded.Person,
                     contentDescription = "Profile"
@@ -527,4 +533,13 @@ fun BottomNavigationBar(navController: NavController) {
             Spacer(modifier = Modifier.weight(1f, true))
         }
     )
+}
+
+fun func1(navController:NavController): () -> Unit {
+    val currentUser=auth.currentUser
+    if (currentUser==null)
+        navController.navigate(route = "auth")
+    else
+        navController.navigate(route = "profile")
+       return { }
 }
