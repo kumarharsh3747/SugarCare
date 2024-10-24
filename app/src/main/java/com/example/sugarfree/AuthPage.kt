@@ -22,18 +22,18 @@ import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
-fun AuthPage(navController: NavController) {
+fun AuthPage(navController: NavController, returnTo: String? = null) {
     var isLoginMode by remember { mutableStateOf(true) }
 
     if (isLoginMode) {
-        LoginPage(navController) { isLoginMode = false } // Correctly passing the switch function
+        LoginPage(navController, returnTo = returnTo) { isLoginMode = false }
     } else {
-        SignupPage(navController) { isLoginMode = true }
+        SignupPage(navController, returnTo = returnTo) { isLoginMode = true }
     }
 }
 
 @Composable
-fun LoginPage(navController: NavController, onSwitchToSignup: () -> Unit) {
+fun LoginPage(navController: NavController, returnTo: String? = null, onSwitchToSignup: () -> Unit) {
     var email by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
     val context = LocalContext.current
@@ -59,7 +59,6 @@ fun LoginPage(navController: NavController, onSwitchToSignup: () -> Unit) {
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
-            // Email Input
             BasicTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -83,7 +82,6 @@ fun LoginPage(navController: NavController, onSwitchToSignup: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Password Input
             BasicTextField(
                 value = password,
                 onValueChange = { password = it },
@@ -108,20 +106,27 @@ fun LoginPage(navController: NavController, onSwitchToSignup: () -> Unit) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Login Button
             Button(
                 onClick = {
                     val emailInput = email.text
                     val passwordInput = password.text
 
-                    FirebaseAuth.getInstance().signInWithEmailAndPassword(emailInput, passwordInput)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                navController.navigate("home") // Navigate to Home Page on success
-                            } else {
-                                Toast.makeText(context, "Login failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                    if (emailInput.isNotEmpty() && passwordInput.isNotEmpty()) {
+                        FirebaseAuth.getInstance().signInWithEmailAndPassword(emailInput, passwordInput)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    if (returnTo != null) {
+                                        navController.navigate(returnTo)
+                                    } else {
+                                        navController.navigate("home")
+                                    }
+                                } else {
+                                    Toast.makeText(context, "Login failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                                }
                             }
-                        }
+                    } else {
+                        Toast.makeText(context, "Please enter email and password", Toast.LENGTH_SHORT).show()
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -133,13 +138,12 @@ fun LoginPage(navController: NavController, onSwitchToSignup: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Sign Up Text
             Text(
                 text = "Don’t have an account? Sign Up",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
-                    .clickable { onSwitchToSignup() }, // Correctly switching to Signup
+                    .clickable { onSwitchToSignup() },
                 textAlign = TextAlign.Center,
                 color = Color.Gray
             )
@@ -148,7 +152,7 @@ fun LoginPage(navController: NavController, onSwitchToSignup: () -> Unit) {
 }
 
 @Composable
-fun SignupPage(navController: NavController, onSwitchToLogin: () -> Unit) {
+fun SignupPage(navController: NavController, returnTo: String? = null, onSwitchToLogin: () -> Unit) {
     var email by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
     var confirmPassword by remember { mutableStateOf(TextFieldValue("")) }
@@ -175,7 +179,6 @@ fun SignupPage(navController: NavController, onSwitchToLogin: () -> Unit) {
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
-            // Email Input
             BasicTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -199,7 +202,6 @@ fun SignupPage(navController: NavController, onSwitchToLogin: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Password Input
             BasicTextField(
                 value = password,
                 onValueChange = { password = it },
@@ -224,7 +226,6 @@ fun SignupPage(navController: NavController, onSwitchToLogin: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Confirm Password Input
             BasicTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
@@ -249,28 +250,34 @@ fun SignupPage(navController: NavController, onSwitchToLogin: () -> Unit) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Sign Up Button
             Button(
                 onClick = {
                     val emailInput = email.text
                     val passwordInput = password.text
                     val confirmPasswordInput = confirmPassword.text
 
-                    // Check if passwords match
                     if (passwordInput != confirmPasswordInput) {
                         Toast.makeText(context, "Passwords do not match", Toast.LENGTH_LONG).show()
                         return@Button
                     }
 
-                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(emailInput, passwordInput)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-//                                navController.navigate("home") // Navigate to Home Page on success
-                                Toast.makeText(context, "Signup Successful", Toast.LENGTH_LONG).show()
-                            } else {
-                                Toast.makeText(context, "Signup failed ", Toast.LENGTH_LONG).show()
+                    if (emailInput.isNotEmpty() && passwordInput.isNotEmpty()) {
+                        FirebaseAuth.getInstance().createUserWithEmailAndPassword(emailInput, passwordInput)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Toast.makeText(context, "Signup Successful", Toast.LENGTH_LONG).show()
+                                    if (returnTo != null) {
+                                        navController.navigate(returnTo)
+                                    } else {
+                                        navController.navigate("home")
+                                    }
+                                } else {
+                                    Toast.makeText(context, "Signup failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                                }
                             }
-                        }
+                    } else {
+                        Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -282,7 +289,6 @@ fun SignupPage(navController: NavController, onSwitchToLogin: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Already have an account Text
             Text(
                 text = "Already have an account? Login",
                 modifier = Modifier

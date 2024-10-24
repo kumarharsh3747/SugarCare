@@ -9,8 +9,8 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.example.sugarfree" />
-                  <option name="mobileSdkAppId" value="1:655140471335:android:e324dc86bb0ad5fd03c402" />
+                  <option name="appId" value="com.example.sugarCare" />
+                  <option name="mobileSdkAppId" value="1:655140471335:android:7a7f3ddd21e0016203c402" />
                   <option name="projectId" value="sugarfree-df710" />
                   <option name="projectNumber" value="655140471335" />
                 </ConnectionSetting>
