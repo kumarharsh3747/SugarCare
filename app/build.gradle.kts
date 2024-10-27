@@ -92,6 +92,7 @@ dependencies {
     implementation(libs.engage.core)
     implementation(libs.firebase.common.ktx)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.storage.ktx)
 
     // Testing Dependencies
     testImplementation(libs.junit)
@@ -232,6 +233,11 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc01")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0-rc01")
 
+    implementation ("androidx.compose.material3:material3:1.1.0")  // or the latest version
+    implementation ("androidx.compose.ui:ui:1.5.0")  // or the latest version
+    implementation ("androidx.compose.ui:ui-text:1.5.0")  // or the latest version
+
+    implementation ("com.google.firebase:firebase-firestore:24.5.0")
 
 
 }

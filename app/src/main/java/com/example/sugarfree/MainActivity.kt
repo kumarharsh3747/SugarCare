@@ -1,5 +1,6 @@
 package com.example.sugarfree
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,14 +14,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sugarfree.ui.theme.SugarFreeTheme
+import com.google.firebase.Firebase
+import com.google.firebase.initialize
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Firebase.initialize(this)
         enableEdgeToEdge()  // Assuming this is a custom function you implemented
         setContent {
             val navController = rememberNavController()
             val cartViewModel: CartViewModel = viewModel() // Create an instance of CartViewModel
+
 
             NavHost(navController = navController, startDestination = "home") { // Start with home
                 composable("home") {
@@ -56,6 +61,7 @@ class MainActivity : ComponentActivity() {
                composable("ecommerce") {
                   ECommercePage(navController,cartViewModel) // Pass the navController here
             }
+
 
                 composable("profile") {
                     ProfilePage(navController) // Pass the navController here
