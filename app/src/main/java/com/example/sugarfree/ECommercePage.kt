@@ -98,12 +98,7 @@ fun ECommercePage(navController: NavController, cartViewModel: CartViewModel) {
                         Icon(Icons.Filled.ShoppingCart, contentDescription = "Cart")
                     }
                 }
-//                IconButton(onClick = {
-//                    Log.d("NavController", "Navigating to AddProductPage")
-//                    navController.navigate("addProduct")
-//                }) {
-//                    Icon(Icons.Default.Add, contentDescription = "Add Product")
-//                }
+
 
             },
             navigationIcon = {
