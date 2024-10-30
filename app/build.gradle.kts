@@ -238,6 +238,6 @@ dependencies {
     implementation ("androidx.compose.ui:ui-text:1.5.0")  // or the latest version
 
     implementation ("com.google.firebase:firebase-firestore:24.5.0")
-
+    implementation ("androidx.navigation:navigation-compose:2.7.0")
 
 }

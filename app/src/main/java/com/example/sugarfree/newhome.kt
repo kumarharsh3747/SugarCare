@@ -535,15 +535,13 @@ fun BottomNavigationBar(navController: NavController) {
     )
 }
 
-fun func1(navController: NavController) {
 
+
+fun func1(navController:NavController): () -> Unit {
+    val currentUser=auth.currentUser
+    if (currentUser==null)
+        navController.navigate(route = "auth")
+    else
+        navController.navigate(route = "profile")
+       return { }
 }
-//
-//fun func1(navController:NavController): () -> Unit {
-//    val currentUser=auth.currentUser
-//    if (currentUser==null)
-//        navController.navigate(route = "auth")
-//    else
-//        navController.navigate(route = "profile")
-//       return { }
-//}

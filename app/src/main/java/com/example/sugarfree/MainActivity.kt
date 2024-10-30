@@ -1,10 +1,10 @@
 package com.example.sugarfree
 
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,19 +14,25 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sugarfree.ui.theme.SugarFreeTheme
-import com.google.firebase.Firebase
-import com.google.firebase.initialize
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Firebase.initialize(this)
-        enableEdgeToEdge()  // Assuming this is a custom function you implemented
+
+        // Initialize Firebase
+        FirebaseApp.initializeApp(this)
+
+        enableEdgeToEdge()  // Custom function for edge-to-edge display
         setContent {
             val navController = rememberNavController()
             val cartViewModel: CartViewModel = viewModel() // Create an instance of CartViewModel
+            val addressViewModel: AddressViewModel by viewModels() // Create an instance of AddressViewModel
+            val user = FirebaseAuth.getInstance().currentUser
+            val loggedInUserEmail = user?.email ?: "" // Fetch current user's email
 
-
+            // Setup Navigation
             NavHost(navController = navController, startDestination = "home") { // Start with home
                 composable("home") {
                     MainScreen(navController) // Home composable with profile icon
@@ -58,11 +64,21 @@ class MainActivity : ComponentActivity() {
                 composable("cart") {
                     CartScreen(navController, cartViewModel) // Pass the navController here
                 }
-               composable("ecommerce") {
-                  ECommercePage(navController,cartViewModel) // Pass the navController here
-            }
-
-
+                composable("ecommerce") {
+                    ECommercePage(navController, cartViewModel) // Pass the navController here
+                }
+                composable("account") {
+                    MyAccountPage(navController, loggedInUserEmail) // Pass the loggedInUserEmail here
+                }
+                composable("MyProfilePage") {
+                    MyProfilePage(navController) // Pass the navController here
+                }
+                composable("addressBook") {
+                    AddressBookPage(navController, addressViewModel, loggedInUserEmail) // Pass loggedInUserEmail
+                }
+                composable("addNewAddress") {
+                    AddNewAddressPage(navController, addressViewModel, loggedInUserEmail) // Pass loggedInUserEmail
+                }
                 composable("profile") {
                     ProfilePage(navController) // Pass the navController here
                 }
@@ -78,20 +94,16 @@ class MainActivity : ComponentActivity() {
                 composable("details3") {
                     HealthTipsScreen3(navController) // Pass the navController here
                 }
-
                 composable("fruitDetails/{fruitName}") { backStackEntry ->
                     val fruitName = backStackEntry.arguments?.getString("fruitName") ?: ""
                     FruitDetailsScreen(fruitName)
                 }
-
                 composable("placeOrder") {
                     PlaceOrderPage(cartViewModel.cartItems, onBack = { navController.popBackStack() }) {
                         // Handle the order placement logic here
                         cartViewModel.cartItems.clear() // Clear cart after placing the order
                     }
                 }
-
-
             }
         }
     }

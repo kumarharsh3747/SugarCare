@@ -3,6 +3,7 @@ package com.example.sugarfree
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateListOf
 
+
 class CartViewModel : ViewModel() {
     // List to hold cart items
     var cartItems = mutableStateListOf<Product>()
