@@ -79,7 +79,7 @@ fun ProfilePage(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Button to edit profile
-        Button(onClick = { /* Handle edit profile click */ }) {
+        Button(onClick = { navController.navigate("MyProfilePage") }) {
             Text(text = "Edit Profile")
 
         }
