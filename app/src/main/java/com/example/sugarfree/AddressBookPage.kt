@@ -3,6 +3,8 @@ package com.example.sugarfree
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -14,17 +16,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddressBookPage(navController: NavController, addressViewModel: AddressViewModel, currentUserEmail: String){
-    // Observe the addresses from the ViewModel
-    val addressList by remember { mutableStateOf(addressViewModel.addressList) }
+fun AddressBookPage(navController: NavController, addressViewModel: AddressViewModel = viewModel(), currentUserEmail: String) {
+    // Observe address list state
+    val addressList by addressViewModel.addressList.collectAsState()
 
-    // Fetch addresses for the current user
+    // Fetch addresses when the composable enters the composition
     LaunchedEffect(currentUserEmail) {
         addressViewModel.fetchAddresses(currentUserEmail)
     }
@@ -57,17 +59,18 @@ fun AddressBookPage(navController: NavController, addressViewModel: AddressViewM
             if (addressList.isEmpty()) {
                 Text("No saved addresses", modifier = Modifier.padding(16.dp))
             } else {
-                addressList.forEach { address ->
-                    AddressCard(
-                        name = address.name,
-                        address = address.address,
-                        isPrimary = address.isPrimary,
-                        onEditClick = { /* Handle edit */ },
-                        onDeleteClick = {
-                            addressViewModel.deleteAddress(currentUserEmail, address.addressId) // Pass addressId for deletion
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
+                LazyColumn {
+                    items(addressList) { address ->
+                        AddressCard(
+                            name = address.name,
+                            address = address.address,
+                            isPrimary = address.isPrimary,
+                            onEditClick = { /* Handle edit */ },
+                            onDeleteClick = {
+                                addressViewModel.deleteAddress(currentUserEmail, address.addressId) // Pass addressId for deletion
+                            }
+                        )
+                    }
                 }
             }
 

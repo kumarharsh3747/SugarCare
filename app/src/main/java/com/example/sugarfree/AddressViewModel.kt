@@ -1,73 +1,83 @@
 package com.example.sugarfree
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import java.util.UUID
 
 data class Address(
-    val addressId: String = "",  // Add an ID for address identification
-    val name: String,
-    val address: String,
-    val isPrimary: Boolean = false
+    val name: String = "",
+    val address: String = "",
+    val isPrimary: Boolean = false,
+    val addressId: String = "" // Assuming you have this for deletion
 )
 
 class AddressViewModel : ViewModel() {
-    // MutableStateList to hold the addresses as Address objects
-    val addressList = mutableStateListOf<Address>()
+    private val _addressList = MutableStateFlow<List<Address>>(emptyList())
+    val addressList: StateFlow<List<Address>> = _addressList.asStateFlow()
+    val firestore: FirebaseFirestore = Firebase.firestore
 
-    // Firebase Firestore instance
-    private val firestore: FirebaseFirestore = Firebase.firestore
-
-    // Function to add a new address for the current user
-    fun addAddress(currentUserEmail: String, newAddress: Address) {
-        firestore.collection("users")
-            .document(currentUserEmail) // Use the user's email as the document ID
-            .collection("addresses") // Sub-collection for addresses
-            .add(newAddress) // Add the new address
-            .addOnSuccessListener {
-                addressList.add(newAddress) // Add to local list
-            }
-            .addOnFailureListener { exception ->
-                println("Error adding address: ${exception.message}")
-            }
-    }
-
-    // Function to fetch addresses for the current user
     fun fetchAddresses(currentUserEmail: String) {
-        firestore.collection("users")
-            .document(currentUserEmail)
-            .collection("addresses")
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                addressList.clear() // Clear existing addresses
-                for (document in querySnapshot.documents) {
-                    val address = document.toObject(Address::class.java)
-                    if (address != null) {
-                        addressList.add(address) // Add fetched address to the list
-                    }
+        val sanitizedEmail = currentUserEmail.replace(".", ",")
+        viewModelScope.launch {
+            try {
+                val result = firestore.collection("users")
+                    .document(sanitizedEmail)
+                    .collection("addresses")
+                    .get()
+                    .await() // Await Firestore operation
+
+                val fetchedAddresses = result.map { document ->
+                    document.toObject(Address::class.java) // Ensure this is correct
                 }
+
+                _addressList.value = fetchedAddresses
+            } catch (e: Exception) {
+                Log.e("AddressViewModel", "Error fetching addresses: ${e.message}")
             }
-            .addOnFailureListener { exception ->
-                println("Error fetching addresses: ${exception.message}")
-            }
+        }
     }
 
-    // Function to delete an address for the current user
+    // Make sure this function exists
     fun deleteAddress(currentUserEmail: String, addressId: String) {
-        firestore.collection("users")
-            .document(currentUserEmail)
-            .collection("addresses")
-            .document(addressId)
-            .delete()
-            .addOnSuccessListener {
-                // Remove the address from the local list
-                addressList.removeIf { it.addressId == addressId } // Ensure Address has an addressId property
-            }
-            .addOnFailureListener { exception ->
-                println("Error deleting address: ${exception.message}")
-            }
-    }
+        val sanitizedEmail = currentUserEmail.replace(".", ",")
+        viewModelScope.launch {
+            try {
+                firestore.collection("users")
+                    .document(sanitizedEmail)
+                    .collection("addresses")
+                    .document(addressId)
+                    .delete()
+                    .await()
 
+                // Optionally, fetch addresses again after deletion
+                fetchAddresses(currentUserEmail)
+            } catch (e: Exception) {
+                Log.e("AddressViewModel", "Error deleting address: ${e.message}")
+            }
+        }
+    }
+    // Function to add address
+    fun addAddress(currentUserEmail: String, address: Address) {
+        val sanitizedEmail = currentUserEmail.replace(".", ",")
+        viewModelScope.launch {
+            try {
+                firestore.collection("users")
+                    .document(sanitizedEmail)
+                    .collection("addresses")
+                    .add(address) // Add address to Firestore
+            } catch (e: Exception) {
+                Log.e("AddressViewModel", "Error adding address: ${e.message}")
+            }
+        }
+    }
 }

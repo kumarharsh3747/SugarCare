@@ -14,7 +14,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddNewAddressPage(navController: NavController, addressViewModel: AddressViewModel, currentUserEmail: String) {
@@ -34,15 +33,17 @@ fun AddNewAddressPage(navController: NavController, addressViewModel: AddressVie
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Add New Address", color = Color.Black) },
+                title = { Text("Add New Address", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
+                            tint = Color.White
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
             )
         }
     ) { innerPadding ->
@@ -51,14 +52,22 @@ fun AddNewAddressPage(navController: NavController, addressViewModel: AddressVie
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp)
-                .verticalScroll(scrollState),  // Enable vertical scrolling
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .verticalScroll(scrollState),
+            verticalArrangement = Arrangement.spacedBy(12.dp)  // Space between elements
         ) {
-            // Form fields
+            // Form fields for address details
             OutlinedTextField(
                 value = fullName,
                 onValueChange = { fullName = it },
                 label = { Text("Full Name") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = phoneNumber,
+                onValueChange = { phoneNumber = it },
+                label = { Text("Contact Number for Order Delivery") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -112,37 +121,33 @@ fun AddNewAddressPage(navController: NavController, addressViewModel: AddressVie
                 modifier = Modifier.fillMaxWidth()
             )
 
-            OutlinedTextField(
-                value = phoneNumber,
-                onValueChange = { phoneNumber = it },
-                label = { Text("Contact Number for Order Delivery") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                modifier = Modifier.fillMaxWidth()
-            )
+            Spacer(modifier = Modifier.height(24.dp))
 
-            // Save Address Button
             Button(
                 onClick = {
+                    // Validate inputs
                     if (fullName.isNotBlank() && pincode.isNotBlank() && phoneNumber.isNotBlank()) {
+                        // Create a new address object
                         val newAddress = Address(
                             name = fullName,
                             address = """
-                        $houseNo, $street, $area
-                        $city, $state - $pincode
-                        Landmark: $landmark
-                    """.trimIndent(),
+                                $houseNo, $street, $area
+                                $city, $state - $pincode
+                                Landmark: $landmark
+                            """.trimIndent(),
                             isPrimary = false
                         )
-                        addressViewModel.addAddress(currentUserEmail, newAddress)  // Pass email and address
-                        navController.popBackStack()
+                        // Call ViewModel to add address
+                        addressViewModel.addAddress(currentUserEmail, newAddress)
+                        navController.popBackStack() // Navigate back after saving
+                    } else {
+                        // Handle empty fields (optional: show a snackbar or toast)
                     }
-                }
+                },
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text("SAVE TO ADDRESS BOOK")
             }
         }
-
-
-        }
     }
-
+}
