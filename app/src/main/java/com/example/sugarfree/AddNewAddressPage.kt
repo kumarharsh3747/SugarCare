@@ -135,8 +135,10 @@ fun AddNewAddressPage(navController: NavController, addressViewModel: AddressVie
                                 $city, $state - $pincode
                                 Landmark: $landmark
                             """.trimIndent(),
+                            phoneNumber = phoneNumber,  // Include phone number
                             isPrimary = false
                         )
+
                         // Call ViewModel to add address
                         addressViewModel.addAddress(currentUserEmail, newAddress)
                         navController.popBackStack() // Navigate back after saving

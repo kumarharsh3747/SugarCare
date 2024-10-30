@@ -64,6 +64,7 @@ fun AddressBookPage(navController: NavController, addressViewModel: AddressViewM
                         AddressCard(
                             name = address.name,
                             address = address.address,
+                            phoneNumber = address.phoneNumber,
                             isPrimary = address.isPrimary,
                             onEditClick = { /* Handle edit */ },
                             onDeleteClick = {
@@ -103,6 +104,7 @@ fun AddressBookPage(navController: NavController, addressViewModel: AddressViewM
 fun AddressCard(
     name: String,
     address: String,
+    phoneNumber: String,
     isPrimary: Boolean = false,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit
@@ -140,6 +142,15 @@ fun AddressCard(
 
             Text(
                 text = address,
+                fontSize = 14.sp,
+                color = Color.DarkGray
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Display phone number here
+            Text(
+                text = "Contact: $phoneNumber",  // Display the phone number
                 fontSize = 14.sp,
                 color = Color.DarkGray
             )

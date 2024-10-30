@@ -17,9 +17,11 @@ import java.util.UUID
 data class Address(
     val name: String = "",
     val address: String = "",
+    val phoneNumber: String = "",  // New field for phone number
     val isPrimary: Boolean = false,
-    val addressId: String = "" // Assuming you have this for deletion
+    val addressId: String = ""  // For deletion
 )
+
 
 class AddressViewModel : ViewModel() {
     private val _addressList = MutableStateFlow<List<Address>>(emptyList())
@@ -34,10 +36,12 @@ class AddressViewModel : ViewModel() {
                     .document(sanitizedEmail)
                     .collection("addresses")
                     .get()
-                    .await() // Await Firestore operation
+                    .await()
 
                 val fetchedAddresses = result.map { document ->
-                    document.toObject(Address::class.java) // Ensure this is correct
+                    document.toObject(Address::class.java).copy(
+                        addressId = document.id // Ensure we save the document ID
+                    )
                 }
 
                 _addressList.value = fetchedAddresses
@@ -46,6 +50,7 @@ class AddressViewModel : ViewModel() {
             }
         }
     }
+
 
     // Make sure this function exists
     fun deleteAddress(currentUserEmail: String, addressId: String) {
@@ -71,13 +76,20 @@ class AddressViewModel : ViewModel() {
         val sanitizedEmail = currentUserEmail.replace(".", ",")
         viewModelScope.launch {
             try {
+                val addressData = mapOf(
+                    "name" to address.name,
+                    "address" to address.address,
+                    "phoneNumber" to address.phoneNumber,  // Add phone number
+                    "isPrimary" to address.isPrimary
+                )
                 firestore.collection("users")
                     .document(sanitizedEmail)
                     .collection("addresses")
-                    .add(address) // Add address to Firestore
+                    .add(addressData)  // Save the address along with the phone number
             } catch (e: Exception) {
                 Log.e("AddressViewModel", "Error adding address: ${e.message}")
             }
         }
     }
+
 }
