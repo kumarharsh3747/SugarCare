@@ -136,7 +136,7 @@ fun AddNewAddressPage(navController: NavController, addressViewModel: AddressVie
                                 Landmark: $landmark
                             """.trimIndent(),
                             phoneNumber = phoneNumber,  // Include phone number
-                            isPrimary = false
+                          //  isPrimary = false
                         )
 
                         // Call ViewModel to add address

@@ -1,6 +1,7 @@
 package com.example.sugarfree
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,14 +20,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+import androidx.compose.material3.MaterialTheme // Make sure this import is included
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddressBookPage(navController: NavController, addressViewModel: AddressViewModel = viewModel(), currentUserEmail: String) {
-    // Observe address list state
     val addressList by addressViewModel.addressList.collectAsState()
 
-    // Fetch addresses when the composable enters the composition
     LaunchedEffect(currentUserEmail) {
         addressViewModel.fetchAddresses(currentUserEmail)
     }
@@ -68,7 +68,10 @@ fun AddressBookPage(navController: NavController, addressViewModel: AddressViewM
                             isPrimary = address.isPrimary,
                             onEditClick = { /* Handle edit */ },
                             onDeleteClick = {
-                                addressViewModel.deleteAddress(currentUserEmail, address.addressId) // Pass addressId for deletion
+                                addressViewModel.deleteAddress(currentUserEmail, address.addressId)
+                            },
+                            onSetPrimaryClick = {
+                                addressViewModel.setAsPrimaryAddress(currentUserEmail, address.addressId)
                             }
                         )
                     }
@@ -79,7 +82,7 @@ fun AddressBookPage(navController: NavController, addressViewModel: AddressViewM
 
             OutlinedButton(
                 onClick = {
-                    navController.navigate("addNewAddress")  // Navigate to Add Address Page
+                    navController.navigate("addNewAddress") // Navigate to Add Address Page
                 },
                 border = BorderStroke(1.dp, Color.Gray),
                 shape = RoundedCornerShape(8.dp),
@@ -99,7 +102,6 @@ fun AddressBookPage(navController: NavController, addressViewModel: AddressViewM
     }
 }
 
-
 @Composable
 fun AddressCard(
     name: String,
@@ -107,13 +109,14 @@ fun AddressCard(
     phoneNumber: String,
     isPrimary: Boolean = false,
     onEditClick: () -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    onSetPrimaryClick: () -> Unit // Add onSetPrimaryClick as a parameter
 ) {
     Card(
-        shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable { /* Handle select action if needed */ },
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F7F7))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -128,14 +131,25 @@ fun AddressCard(
                     modifier = Modifier.weight(1f)
                 )
 
-                if (isPrimary) {
-                    Text(
-                        text = "Primary",
-                        fontSize = 14.sp,
-                        color = Color.Green,
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
-                }
+//                if (isPrimary) {
+//                    Text(
+//                        text = "Primary",
+//                        fontSize = 14.sp,
+//                        color = Color.Green,
+//                        modifier = Modifier.padding(start = 8.dp)
+//                    )
+//                } else {
+//                    Text(
+//                        text = "Set as Primary",
+//                        fontSize = 14.sp,
+//                        color = Color.White,
+//                        modifier = Modifier
+//                            .padding(start = 8.dp)
+//                            .background(color = Color.Green, shape = RoundedCornerShape(4.dp))
+//                            .padding(horizontal = 8.dp, vertical = 4.dp)
+//                            .clickable { onSetPrimaryClick() } // Call the function to set this address as primary
+//                    )
+//                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -148,9 +162,8 @@ fun AddressCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Display phone number here
             Text(
-                text = "Contact: $phoneNumber",  // Display the phone number
+                text = "Contact: $phoneNumber",
                 fontSize = 14.sp,
                 color = Color.DarkGray
             )

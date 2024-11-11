@@ -13,6 +13,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.example.sugarfree.ui.theme.SugarFreeTheme
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -31,7 +33,7 @@ class MainActivity : ComponentActivity() {
             val addressViewModel: AddressViewModel by viewModels() // Create an instance of AddressViewModel
             val user = FirebaseAuth.getInstance().currentUser
             val loggedInUserEmail = user?.email ?: "" // Fetch current user's email
-
+            val ordersViewModel: OrderViewModel = viewModel() // Get ViewModel instance
             // Setup Navigation
             NavHost(navController = navController, startDestination = "home") { // Start with home
                 composable("home") {
@@ -64,6 +66,36 @@ class MainActivity : ComponentActivity() {
                 composable("cart") {
                     CartScreen(navController, cartViewModel) // Pass the navController here
                 }
+                composable("checkout") {
+                    CheckoutPage(
+                        navController = navController,
+                        addressViewModel = addressViewModel,
+                        currentUserEmail = "user@example.com", // Pass the current user's email here
+                        cartViewModel = cartViewModel // Pass the cartViewModel if needed
+                    )
+                }
+                composable("selectPaymentPage") {
+                    SelectPaymentPage(
+                        navController = navController,
+                        totalAmount = cartViewModel.getTotalPrice()
+
+                    )
+                }
+                composable("orderConfirmation") {
+                    OrderConfirmationPage(
+                        navController = navController,
+                        cartViewModel = cartViewModel
+                    )
+                }
+
+
+                composable("myOrders") {
+
+                    MyOrdersPage(navController = navController, orderViewModel = ordersViewModel, loggedInUserEmail) // Pass ViewModel to MyOrdersPage
+                }
+
+
+
                 composable("ecommerce") {
                     ECommercePage(navController, cartViewModel) // Pass the navController here
                 }
@@ -80,7 +112,7 @@ class MainActivity : ComponentActivity() {
                     AddNewAddressPage(navController, addressViewModel, loggedInUserEmail) // Pass loggedInUserEmail
                 }
                 composable("profile") {
-                    ProfilePage(navController) // Pass the navController here
+                    ProfilePage(navController,addressViewModel,ordersViewModel) // Pass the navController here
                 }
                 composable("challanges") {
                     challanges(navController) // Pass the navController here
@@ -98,12 +130,13 @@ class MainActivity : ComponentActivity() {
                     val fruitName = backStackEntry.arguments?.getString("fruitName") ?: ""
                     FruitDetailsScreen(fruitName)
                 }
-                composable("placeOrder") {
-                    PlaceOrderPage(cartViewModel.cartItems, onBack = { navController.popBackStack() }) {
-                        // Handle the order placement logic here
-                        cartViewModel.cartItems.clear() // Clear cart after placing the order
-                    }
+
+                composable("productDetail/{productId}") { backStackEntry ->
+                    val productId = backStackEntry.arguments?.getString("productId")?.toInt() ?: 0
+                    ProductDetailPage(productId = productId, navController = navController, cartViewModel = cartViewModel)
                 }
+
+
             }
         }
     }

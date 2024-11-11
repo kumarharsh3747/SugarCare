@@ -55,7 +55,8 @@ fun MyAccountPage(navController: NavController, currentUserEmail: String) {
             AccountOptionRow(
                 icon = Icons.Default.ShoppingBag,
                 label = "My Orders",
-                onClick = { /* Navigate to Orders */ }
+                onClick = { navController.navigate("myOrders")
+                    /* Navigate to Orders */ }
             )
 
             AccountOptionRow(

@@ -123,7 +123,7 @@ fun TipsToSucceedSection() {
     ) {
         Text(
             text = "5 Tips to Succeed",
-           // style = MaterialTheme.typography.h6,
+            // style = MaterialTheme.typography.h6,
             color = Color.Black
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -132,7 +132,7 @@ fun TipsToSucceedSection() {
         for (i in 1..5) {
             Text(
                 text = "$i. ${getTipText(i)}",
-               // style = MaterialTheme.typography.body1,
+                // style = MaterialTheme.typography.body1,
                 color = Color.Black
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -162,7 +162,7 @@ fun BenefitsAndWhatToDoSection() {
         // Display the "Benefits" text section
         Text(
             text = "Benefits",
-           // style = MaterialTheme.typography.h6,
+            // style = MaterialTheme.typography.h6,
             color = Color.Black
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -177,7 +177,7 @@ fun BenefitsAndWhatToDoSection() {
         benefits.forEach { benefit ->
             Text(
                 text = benefit,
-               // style = MaterialTheme.typography.body1,
+                // style = MaterialTheme.typography.body1,
                 color = Color.Black
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -188,7 +188,7 @@ fun BenefitsAndWhatToDoSection() {
         // Display the "What to Do" text section
         Text(
             text = "What to Do",
-           // style = MaterialTheme.typography.h6,
+            // style = MaterialTheme.typography.h6,
             color = Color.Black
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -413,12 +413,12 @@ fun detoxsButton(navController: NavController) {
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-            painter = painterResource(id = R.drawable.timer),
-            contentDescription = "Box Image",
-            modifier = Modifier
-                .size(200.dp, 200.dp)
+                painter = painterResource(id = R.drawable.timer),
+                contentDescription = "Box Image",
+                modifier = Modifier
+                    .size(200.dp, 200.dp)
 
-        )
+            )
         }
     }
 }
@@ -543,5 +543,5 @@ fun func1(navController:NavController): () -> Unit {
         navController.navigate(route = "auth")
     else
         navController.navigate(route = "profile")
-       return { }
+    return { }
 }
