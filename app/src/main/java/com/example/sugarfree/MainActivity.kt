@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -134,6 +135,10 @@ class MainActivity : ComponentActivity() {
                 composable("productDetail/{productId}") { backStackEntry ->
                     val productId = backStackEntry.arguments?.getString("productId")?.toInt() ?: 0
                     ProductDetailPage(productId = productId, navController = navController, cartViewModel = cartViewModel)
+                }
+
+                composable("ChatBot"){
+                    ChatScreen(navController, PaddingValues())
                 }
 
 

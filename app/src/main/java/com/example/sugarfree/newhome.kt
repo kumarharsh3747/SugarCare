@@ -40,6 +40,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.foundation.Image
+import androidx.compose.material.icons.rounded.Chat
 import androidx.compose.runtime.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -514,10 +515,10 @@ fun BottomNavigationBar(navController: NavController) {
 
             Spacer(modifier = Modifier.weight(1f, true))
 
-            androidx.compose.material3.IconButton(onClick = { navController.navigate("home") }) {
+            androidx.compose.material3.IconButton(onClick = { navController.navigate("ChatBot") }) {
                 androidx.compose.material3.Icon(
-                    imageVector = Icons.Rounded.Home,
-                    contentDescription = "Home"
+                    imageVector = Icons.Rounded.Chat,
+                    contentDescription = "ChatBot"
                 )
             }
 
@@ -531,6 +532,7 @@ fun BottomNavigationBar(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.weight(1f, true))
+
         }
     )
 }
