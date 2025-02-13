@@ -3,10 +3,11 @@ package com.example.sugarfree
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateListOf
 
+
 class CartViewModel : ViewModel() {
     // List to hold cart items
     var cartItems = mutableStateListOf<Product>()
-
+    var addresses: List<Address> = emptyList()
     // Function to add products to the cart
     fun addToCart(product: Product) {
         cartItems.add(product)
@@ -26,4 +27,7 @@ class CartViewModel : ViewModel() {
     fun clearCart() {
         cartItems.clear()
     }
+
+
+
 }

@@ -12,9 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +34,7 @@ private lateinit var auth: FirebaseAuth
 
 
 @Composable
-fun ProfilePage(navController: NavController) {
+fun ProfilePage(navController: NavController,addressViewModel: AddressViewModel,orderViewModel: OrderViewModel) {
     auth = Firebase.auth
     Column(
         modifier = Modifier
@@ -74,23 +75,24 @@ fun ProfilePage(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Divider
-        Divider(color = Color.Black, thickness = 1.dp)
+        HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Button to edit profile
-        Button(onClick = { /* Handle edit profile click */ }) {
+        Button(onClick = { navController.navigate("MyProfilePage") }) {
             Text(text = "Edit Profile")
 
         }
-        Button(onClick = { func(navController=navController) }){
+        Button(onClick = { func(navController=navController,addressViewModel = addressViewModel,orderViewModel=orderViewModel) }){
 
             Text(text = "Logout")}
     }
 }
 
 
-fun func(navController:NavController): () -> Unit {
+fun func(navController:NavController,addressViewModel: AddressViewModel,orderViewModel: OrderViewModel): () -> Unit {
+
     navController.navigate(route = "home")
     auth.signOut()
     return { }

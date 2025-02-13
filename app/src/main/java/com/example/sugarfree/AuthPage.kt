@@ -41,7 +41,7 @@ fun LoginPage(navController: NavController, returnTo: String? = null, onSwitchTo
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(Color.LightGray, Color.White))),
+            .background(Brush.verticalGradient(listOf(Color(0xFFF5E6C9), Color.White))),
         contentAlignment = Alignment.Center
     ) {
         Column(
