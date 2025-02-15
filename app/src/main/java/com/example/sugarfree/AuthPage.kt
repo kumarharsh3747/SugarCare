@@ -1,7 +1,6 @@
 package com.example.sugarfree
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.*
@@ -18,8 +17,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import android.widget.Toast
+import androidx.compose.ui.draw.shadow
 import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun AuthPage(navController: NavController, returnTo: String? = null) {
@@ -41,7 +43,7 @@ fun LoginPage(navController: NavController, returnTo: String? = null, onSwitchTo
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(Color(0xFFF5E6C9), Color.White))),
+            .background(Brush.verticalGradient(listOf(Color(0xFFB2DFDB), Color.White))),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -49,60 +51,21 @@ fun LoginPage(navController: NavController, returnTo: String? = null, onSwitchTo
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .padding(16.dp)
-                .background(Color.White)
+                .background(Color.White, shape = MaterialTheme.shapes.medium)
                 .padding(32.dp)
+                .border(1.dp, Color.LightGray, shape = MaterialTheme.shapes.medium)
+                .shadow(4.dp, shape = MaterialTheme.shapes.medium)
         ) {
             Text(
                 text = "Login",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 32.dp)
+                modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            BasicTextField(
-                value = email,
-                onValueChange = { email = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                singleLine = true,
-                decorationBox = { innerTextField ->
-                    Box(
-                        Modifier
-                            .background(Color.LightGray, shape = MaterialTheme.shapes.small)
-                            .padding(16.dp)
-                    ) {
-                        if (email.text.isEmpty()) {
-                            Text(text = "Email")
-                        }
-                        innerTextField()
-                    }
-                }
-            )
-
+            CustomTextField(value = email, placeholder = "Email") { email = it }
             Spacer(modifier = Modifier.height(16.dp))
-
-            BasicTextField(
-                value = password,
-                onValueChange = { password = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                visualTransformation = PasswordVisualTransformation(),
-                singleLine = true,
-                decorationBox = { innerTextField ->
-                    Box(
-                        Modifier
-                            .background(Color.LightGray, shape = MaterialTheme.shapes.small)
-                            .padding(16.dp)
-                    ) {
-                        if (password.text.isEmpty()) {
-                            Text(text = "Password")
-                        }
-                        innerTextField()
-                    }
-                }
-            )
+            CustomTextField(value = password, placeholder = "Password", isPassword = true) { password = it }
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -131,7 +94,7 @@ fun LoginPage(navController: NavController, returnTo: String? = null, onSwitchTo
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
             ) {
                 Text(text = "Login", color = Color.White)
             }
@@ -161,7 +124,7 @@ fun SignupPage(navController: NavController, returnTo: String? = null, onSwitchT
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(Color.LightGray, Color.White))),
+            .background(Brush.verticalGradient(listOf(Color(0xFFECEFF1), Color.White))),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -169,84 +132,23 @@ fun SignupPage(navController: NavController, returnTo: String? = null, onSwitchT
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .padding(16.dp)
-                .background(Color.White)
+                .background(Color.White, shape = MaterialTheme.shapes.medium)
                 .padding(32.dp)
+                .border(1.dp, Color.LightGray, shape = MaterialTheme.shapes.medium)
+                .shadow(4.dp, shape = MaterialTheme.shapes.medium)
         ) {
             Text(
                 text = "Sign Up",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 32.dp)
+                modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            BasicTextField(
-                value = email,
-                onValueChange = { email = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                singleLine = true,
-                decorationBox = { innerTextField ->
-                    Box(
-                        Modifier
-                            .background(Color.LightGray, shape = MaterialTheme.shapes.small)
-                            .padding(16.dp)
-                    ) {
-                        if (email.text.isEmpty()) {
-                            Text(text = "Email")
-                        }
-                        innerTextField()
-                    }
-                }
-            )
-
+            CustomTextField(value = email, placeholder = "Email") { email = it }
             Spacer(modifier = Modifier.height(16.dp))
-
-            BasicTextField(
-                value = password,
-                onValueChange = { password = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                visualTransformation = PasswordVisualTransformation(),
-                singleLine = true,
-                decorationBox = { innerTextField ->
-                    Box(
-                        Modifier
-                            .background(Color.LightGray, shape = MaterialTheme.shapes.small)
-                            .padding(16.dp)
-                    ) {
-                        if (password.text.isEmpty()) {
-                            Text(text = "Password")
-                        }
-                        innerTextField()
-                    }
-                }
-            )
-
+            CustomTextField(value = password, placeholder = "Password", isPassword = true) { password = it }
             Spacer(modifier = Modifier.height(16.dp))
-
-            BasicTextField(
-                value = confirmPassword,
-                onValueChange = { confirmPassword = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                visualTransformation = PasswordVisualTransformation(),
-                singleLine = true,
-                decorationBox = { innerTextField ->
-                    Box(
-                        Modifier
-                            .background(Color.LightGray, shape = MaterialTheme.shapes.small)
-                            .padding(16.dp)
-                    ) {
-                        if (confirmPassword.text.isEmpty()) {
-                            Text(text = "Confirm Password")
-                        }
-                        innerTextField()
-                    }
-                }
-            )
+            CustomTextField(value = confirmPassword, placeholder = "Confirm Password", isPassword = true) { confirmPassword = it }
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -282,7 +184,7 @@ fun SignupPage(navController: NavController, returnTo: String? = null, onSwitchT
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
             ) {
                 Text(text = "Sign Up", color = Color.White)
             }
@@ -300,4 +202,29 @@ fun SignupPage(navController: NavController, returnTo: String? = null, onSwitchT
             )
         }
     }
+}
+
+@Composable
+fun CustomTextField(value: TextFieldValue, placeholder: String, isPassword: Boolean = false, onValueChange: (TextFieldValue) -> Unit) {
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        singleLine = true,
+        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+        decorationBox = { innerTextField ->
+            Box(
+                Modifier
+                    .background(Color.LightGray, shape = MaterialTheme.shapes.small)
+                    .padding(16.dp)
+            ) {
+                if (value.text.isEmpty()) {
+                    Text(text = placeholder, color = Color.Gray)
+                }
+                innerTextField()
+            }
+        }
+    )
 }
