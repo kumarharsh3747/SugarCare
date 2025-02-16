@@ -438,7 +438,7 @@ private fun DetoxChallengeSection(navController: NavController) {
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         NavItem("ChatBot", Icons.Rounded.Chat, "ChatBot"),
-        NavItem("Scan", Icons.Default.Search, "foodScanner"),
+        NavItem("Scan", Icons.Default.Search, "fruitlist"),
         NavItem("Shop", Icons.Rounded.ShoppingCart, "ecommerce"),
         NavItem("Profile", Icons.Rounded.Person, "profile"),
 

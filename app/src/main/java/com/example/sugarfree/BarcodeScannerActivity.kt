@@ -40,7 +40,7 @@ import java.util.concurrent.Executors
 @Composable
 fun BarcodeScannerScreen(onBarcodeScanned: (String) -> Unit) {
     val context = LocalContext.current
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
 
     var barcodeValue by remember { mutableStateOf<String?>(null) }
@@ -117,48 +117,51 @@ fun CameraPreview(
     onScanError: (String) -> Unit
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
 
     AndroidView(
         modifier = modifier,
         factory = { ctx ->
             PreviewView(ctx).apply {
                 cameraProviderFuture.addListener({
-                    val cameraProvider = cameraProviderFuture.get()
+                    try {
+                        val cameraProvider = cameraProviderFuture.get()
 
-                    // Preview setup
-                    val preview = Preview.Builder().build().also {
-                        it.setSurfaceProvider(surfaceProvider)
-                    }
-
-                    // Image analysis setup
-                    val executor = Executors.newSingleThreadExecutor()
-                    val imageAnalysis = ImageAnalysis.Builder()
-                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                        .build()
-                        .also { analysis ->
-                            analysis.setAnalyzer(executor) { imageProxy ->
-                                processBarcodeImage(
-                                    imageProxy = imageProxy,
-                                    onBarcodeDetected = onBarcodeDetected,
-                                    onError = onScanError
-                                )
-                            }
+                        // Preview setup
+                        val preview = Preview.Builder().build().also {
+                            it.setSurfaceProvider(surfaceProvider)
                         }
 
-                    // Camera selection
-                    val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                        // Image analysis setup
+                        val executor = Executors.newSingleThreadExecutor()
+                        val imageAnalysis = ImageAnalysis.Builder()
+                            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                            .build()
+                            .also { analysis ->
+                                analysis.setAnalyzer(executor) { imageProxy ->
+                                    processBarcodeImage(
+                                        imageProxy = imageProxy,
+                                        onBarcodeDetected = onBarcodeDetected,
+                                        onError = onScanError
+                                    )
+                                }
+                            }
 
-                    try {
-                        cameraProvider.unbindAll()
-                        cameraProvider.bindToLifecycle(
-                            lifecycleOwner,
-                            cameraSelector,
-                            preview,
-                            imageAnalysis
-                        )
-                    } catch (exc: Exception) {
-                        onScanError("Camera initialization failed: ${exc.localizedMessage}")
+                        // Camera selection
+                        val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+                        try {
+                            cameraProvider.unbindAll()
+                            cameraProvider.bindToLifecycle(
+                                lifecycleOwner,
+                                cameraSelector,
+                                preview,
+                                imageAnalysis
+                            )
+                        } catch (exc: Exception) {
+                            onScanError("Camera initialization failed: ${exc.localizedMessage}")
+                        }
+                    } catch (e: Exception) {
+                        onScanError("Failed to get camera provider: ${e.localizedMessage}")
                     }
                 }, ContextCompat.getMainExecutor(ctx))
             }

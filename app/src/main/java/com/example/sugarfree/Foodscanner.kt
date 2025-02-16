@@ -71,8 +71,8 @@ fun FoodScannerUI(navController: NavController) {
                 )
             )
         },
-        bottomBar = { FoodScannerBottomNavigationBar(navController) },
-        containerColor = MaterialTheme.colorScheme.background
+
+
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -264,39 +264,6 @@ fun highlightSugars(text: String, keywords: List<String>): AnnotatedString {
                 break
             }
         }
-    }
-}
-
-@Composable
-private fun FoodScannerBottomNavigationBar(navController: NavController) {
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        tonalElevation = 8.dp
-    ) {
-        NavigationBarItem(
-            selected = false,
-            onClick = { navController.navigate("home") },
-            icon = { Icon(Icons.Rounded.Home, "Home") },
-            label = { Text("Home") }
-        )
-        NavigationBarItem(
-            selected = true,
-            onClick = { navController.navigate("foodscanner") },
-            icon = { Icon(Icons.Rounded.CameraAlt, "Scanner") },
-            label = { Text("Scanner") }
-        )
-//        NavigationBarItem(
-//            selected = false,
-//            onClick = { navController.navigate("ecommerce") },
-//            icon = { Icon(Icons.Rounded.ShoppingCart, "Shop") },
-//            label = { Text("Shop") }
-//        )
-        NavigationBarItem(
-            selected = false,
-            onClick = { navController.navigate("fruitlist") },
-            icon = { Icon(Icons.Rounded.Eco, "Info") },
-            label = { Text("Info") }
-        )
     }
 }
 
