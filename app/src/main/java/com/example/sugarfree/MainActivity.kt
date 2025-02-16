@@ -14,8 +14,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import com.example.sugarfree.ui.theme.SugarFreeTheme
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -44,8 +42,18 @@ class MainActivity : ComponentActivity() {
                     AuthPage(navController) // This handles both login and signup
                 }
                 composable("foodScanner") {
-                    FoodScannerSimpleUI(navController)
+                    FoodScannerUI(navController)
                 }
+                composable("foodscanner") {
+                    BarcodeScannerScreen { scannedBarcode ->
+                        navController.navigate("foodDetails/$scannedBarcode")
+                    }
+                }
+                composable("foodDetails/{barcode}") { backStackEntry ->
+                    val barcode = backStackEntry.arguments?.getString("barcode") ?: ""
+                    FetchNutritionInfoScreen(barcode)
+                }
+
                 composable("detox") {
                     DetoxTimerPage(navController) // Pass the cartViewModel here
                 }
