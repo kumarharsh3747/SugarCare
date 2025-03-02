@@ -870,7 +870,3 @@ private fun generateSampleData(date: LocalDate): WaterIntakeData {
     )
 }
 
-//@Composable
-//fun WaterIntakeAppPreview() {
-//    WaterIntakeApp(navController = navController)
-//}
