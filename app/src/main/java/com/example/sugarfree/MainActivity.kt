@@ -14,6 +14,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.example.sugarfree.ui.theme.SugarFreeTheme
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -40,6 +42,15 @@ class MainActivity : ComponentActivity() {
                 }
                 composable("auth") {
                     AuthPage(navController) // This handles both login and signup
+                }
+                composable("calculator/{calculatorType}", arguments = listOf(
+                    navArgument("calculatorType") { type = NavType.StringType }
+                )) { backStackEntry ->
+                    val calculatorType = backStackEntry.arguments?.getString("calculatorType") ?: ""
+                    CalculatorScreen(navController, calculatorType)
+                }
+                composable("healthCare") {
+                    HealthCareHome(navController)
                 }
                 composable("foodScanner") {
                     FoodScannerUI(navController)
