@@ -1,5 +1,8 @@
 package com.example.sugarfree
 
+
+import WaterIntakeApp
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sugarfree.ui.theme.SugarFreeTheme
+
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 
@@ -147,6 +151,10 @@ class MainActivity : ComponentActivity() {
 
                 composable("ChatBot"){
                     ChatScreen(navController, PaddingValues())
+                }
+
+                composable("Water_intake") {
+                    WaterIntakeApp(navController)  // Pass the navController here
                 }
 
 

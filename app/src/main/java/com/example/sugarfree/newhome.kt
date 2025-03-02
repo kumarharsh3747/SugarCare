@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Chat
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
@@ -437,7 +438,7 @@ private fun DetoxChallengeSection(navController: NavController) {
 @Composable
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
-        NavItem("ChatBot", Icons.Rounded.Chat, "ChatBot"),
+        NavItem("ChatBot", Icons.AutoMirrored.Rounded.Chat, "ChatBot"),
         NavItem("Scan", Icons.Default.Search, "fruitlist"),
         NavItem("Shop", Icons.Rounded.ShoppingCart, "ecommerce"),
         NavItem("Profile", Icons.Rounded.Person, "profile"),
@@ -586,9 +587,9 @@ fun MiddleBoxSection(navController: NavController) {
                         onClick = { navController.navigate("healthMonitor") }
                     )
                     QuickActionButton(
-                        icon = Icons.Default.LunchDining,
+                        icon = Icons.Default.AddAlarm,
                         label = "Meals",
-                        onClick = { navController.navigate("mealPlanner") }
+                        onClick = { navController.navigate("Water_intake") }
                     )
                     QuickActionButton(
                         icon = Icons.Default.FitnessCenter,

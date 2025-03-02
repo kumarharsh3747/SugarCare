@@ -244,5 +244,8 @@ dependencies {
     implementation ("androidx.compose.runtime:runtime-livedata:<compose_version>")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:<coroutines_version>")
 
+    implementation ("androidx.work:work-runtime-ktx:2.8.1")
+
+
 
 }
