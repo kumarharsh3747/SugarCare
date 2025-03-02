@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.firebase.common.ktx)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.storage.ktx)
+    implementation(libs.play.services.mlkit.barcode.scanning)
 
     // Testing Dependencies
     testImplementation(libs.junit)
