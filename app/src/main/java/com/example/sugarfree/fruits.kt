@@ -7,6 +7,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.CameraAlt
+import androidx.compose.material.icons.rounded.Eco
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -27,8 +33,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStreamReader
 
-// Data class to hold fruit information
-//data class FruitNutritionalInfo(val name: String, val nutrients: Map<String, String>, val imageUrl: String)
 
 // Load fruits with caching and timestamp check
 fun loadFruitsWithCacheAndTimestampCheck(context: Context, onFruitsLoaded: (List<FruitNutritionalInfo>) -> Unit) {
@@ -111,6 +115,7 @@ fun loadFruitsFromBytes(bytes: ByteArray, onFruitsLoaded: (List<FruitNutritional
     onFruitsLoaded(fruits)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FruitAppScreen(navController: NavController) {
     val context = LocalContext.current
@@ -129,22 +134,43 @@ fun FruitAppScreen(navController: NavController) {
         it.name.contains(searchQuery, ignoreCase = true)
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        // Search Bar
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            label = { Text("Search Fruits") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
+    // Scaffold to hold the content, top bar, and bottom navigation bar
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("SugarFree App") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = Color.White
+                )
+            )
+        },
+        bottomBar = {
+            FoodScannerBottomNavigationBar(navController = navController)
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding) // Apply padding to avoid overlap with the bottom bar
+                .padding(16.dp)
+        ) {
+            // Search Bar
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Search Fruits") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        // Scrollable list of fruits
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(filteredFruits) { fruit ->
-                FruitRow(fruit = fruit, navController = navController)
+            // Scrollable list of fruits
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(filteredFruits) { fruit ->
+                    FruitRow(fruit = fruit, navController = navController)
+                }
             }
         }
     }
@@ -179,6 +205,7 @@ fun FruitRow(fruit: FruitNutritionalInfo, navController: NavController) {
         )
     }
 }
+
 @Composable
 fun NutritionalInfoDisplay(fruit: FruitNutritionalInfo) {
     val scrollState = rememberScrollState()
@@ -248,5 +275,38 @@ fun NutritionalInfoDisplay(fruit: FruitNutritionalInfo) {
                     }
             }
         }
+    }
+}
+
+@Composable
+private fun FoodScannerBottomNavigationBar(navController: NavController) {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        tonalElevation = 8.dp
+    ) {
+        NavigationBarItem(
+            selected = false,
+            onClick = { navController.navigate("home") },
+            icon = { Icon(Icons.Rounded.Home, "Home") },
+            label = { Text("Home") }
+        )
+        NavigationBarItem(
+            selected = true,
+            onClick = { navController.navigate("foodscanner") },
+            icon = { Icon(Icons.Rounded.CameraAlt, "Barcode") },
+            label = { Text("Barcode") }
+        )
+        NavigationBarItem(
+            selected = false,
+            onClick = { navController.navigate("foodScanner") },
+            icon = { Icon(Icons.Rounded.CameraAlt, "Scanner") },
+            label = { Text("Scanner") }
+        )
+        NavigationBarItem(
+            selected = false,
+            onClick = { navController.navigate("fruitlist") },
+            icon = { Icon(Icons.Rounded.Eco, "Info") },
+            label = { Text("Info") }
+        )
     }
 }

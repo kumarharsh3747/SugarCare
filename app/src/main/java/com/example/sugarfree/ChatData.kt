@@ -2,51 +2,85 @@ package com.example.sugarfree
 
 import android.graphics.Bitmap
 import com.google.ai.client.generativeai.GenerativeModel
-import com.google.ai.client.generativeai.Chat
 import com.google.ai.client.generativeai.type.content
-import com.google.ai.client.generativeai.type.generationConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object ChatData {
 
-    val api_key = "AIzaSyCkNZw4u-LnkaJeZaiMZUDCLuilMtQ0_go"
+    private const val API_KEY = "AIzaSyCkNZw4u-LnkaJeZaiMZUDCLuilMtQ0_go" // Secure API key storage
 
-    suspend fun getResponse(prompt: String): com.example.sugarfree.Chat {
-        val generativeModel = GenerativeModel(
-            modelName = "gemini-pro", apiKey = api_key
-        )
+    // Define allowed health-related topics
+    private val healthKeywords = listOf(
+        "nutrition", "diet", "sugar intake", "diabetes", "calories",
+        "exercise", "BMI", "fitness", "healthy eating", "blood sugar",
+        "carbs", "insulin", "weight loss", "protein", "metabolism"
+    )
 
-        try {
-            val response = withContext(Dispatchers.IO) {
-                generativeModel.generateContent(prompt)
-            }
+    // Function to check if the prompt is health-related
+    private fun isHealthRelated(prompt: String): Boolean {
+        return healthKeywords.any { keyword -> prompt.contains(keyword, ignoreCase = true) }
+    }
 
+    suspend fun getResponse(prompt: String): Chat {
+        if (!isHealthRelated(prompt)) {
             return Chat(
-                prompt = response.text ?: "error",
-                bitmap = null,
-                isFromUser = false
-            )
-
-        } catch (e: Exception) {
-            return Chat(
-                prompt = e.message ?: "error",
+                prompt = "Sorry, I can only provide information on health and nutrition topics.",
                 bitmap = null,
                 isFromUser = false
             )
         }
 
+        val generativeModel = GenerativeModel(modelName = "gemini-pro", apiKey = API_KEY)
+
+        return try {
+            val response = withContext(Dispatchers.IO) {
+                generativeModel.generateContent(prompt)
+            }
+
+//             val responseText = response.candidates
+//                ?.firstOrNull()
+//                ?.content?.parts
+//                ?.firstOrNull()
+//                ?.text ?: "error"
+
+            // Validate AI response
+            if (!isHealthRelated(response.text ?: "error",)) {
+                return Chat(
+                    prompt = "I'm focused on health and wellness. Please ask about nutrition, fitness, or related topics!",
+                    bitmap = null,
+                    isFromUser = false
+                )
+            }
+
+            Chat(
+                prompt = response.text ?: "error",
+                bitmap = null,
+                isFromUser = false
+            )
+        } catch (e: Exception) {
+            Chat(
+                prompt = e.localizedMessage ?: "error",
+                bitmap = null,
+                isFromUser = false
+            )
+        }
     }
 
-    suspend fun getResponseWithImage(prompt: String, bitmap: Bitmap): com.example.sugarfree.Chat {
-        val generativeModel = GenerativeModel(
-            modelName = "gemini-pro-vision", apiKey = api_key
-        )
+    suspend fun getResponseWithImage(prompt: String, bitmap: Bitmap): Chat {
+        if (!isHealthRelated(prompt)) {
+            return Chat(
+                prompt = "Sorry, I can only process health-related questions.",
+                bitmap = null,
+                isFromUser = false
+            )
+        }
 
-        try {
+        val generativeModel = GenerativeModel(modelName = "gemini-pro-vision", apiKey = API_KEY)
 
+        return try {
             val inputContent = content {
-                image(bitmap)
+                image(bitmap)  // Ensure proper image encoding
                 text(prompt)
             }
 
@@ -54,20 +88,32 @@ object ChatData {
                 generativeModel.generateContent(inputContent)
             }
 
-            return Chat(
+//            val responseText = response.candidates
+//                ?.firstOrNull()
+//                ?.content?.parts
+//                ?.firstOrNull()
+//                ?.text ?: "error"
+
+            // Validate AI response
+            if (!isHealthRelated(response.text ?: "error",)) {
+                return Chat(
+                    prompt = "I'm focused on health and wellness. Please ask about nutrition, fitness, or related topics!",
+                    bitmap = null,
+                    isFromUser = false
+                )
+            }
+
+            Chat(
                 prompt = response.text ?: "error",
                 bitmap = null,
                 isFromUser = false
             )
-
         } catch (e: Exception) {
-            return Chat(
-                prompt = e.message ?: "error",
+            Chat(
+                prompt = e.localizedMessage ?: "error",
                 bitmap = null,
                 isFromUser = false
             )
         }
-
     }
-
 }

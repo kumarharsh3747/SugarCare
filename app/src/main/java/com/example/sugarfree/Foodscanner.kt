@@ -8,25 +8,22 @@ import android.util.Log
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.CameraAlt
+import androidx.compose.material.icons.rounded.Eco
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -39,6 +36,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.mlkit.vision.common.InputImage
@@ -47,108 +45,128 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
-fun FoodScannerSimpleUI(navController: NavController) {
+fun FoodScannerUI(navController: NavController) {
     var recognizedText by remember { mutableStateOf("") }
     var hiddenSugars by remember { mutableStateOf<List<String>>(emptyList()) }
+    var isScanning by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val imageCapture = remember { ImageCapture.Builder().build() }
+    val permissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
-    RequestCameraPermission {
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Sugar Detective",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            )
+        },
+
+
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFE3D4EA)) // Lavender background for the whole page
-                .padding(16.dp)
+                .padding(innerPadding)
         ) {
-            Column(
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-               /* TopAppBar(
-                    title = { Text(text = "Food Scanner", fontSize = 25  .sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSecondary) },
-                    colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0x7C0F0F3B)), // Lavender background for the top bar
-                    modifier = Modifier.height(60.dp)
-                )*/
-
-                CameraPreview(
+            if (permissionState.status.isGranted) {
+                Column(
                     modifier = Modifier
-                        .size(250.dp)
-                        .padding(top = 70.dp)
-                        .background(Color.Gray),
-                    imageCapture = imageCapture
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(text = "Recognized Text:", modifier = Modifier.padding(vertical = 8.dp))
-
-                // Box for Extracted Text with Lavender Background
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .padding(16.dp)
-                        .background(Color(0xFFE6E6FA)) // Lavender Background for the text area
-                        .padding(16.dp)
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    if (recognizedText.isNotEmpty()) {
-                        val sugarKeywords = listOf("glucose", "sugar", "fructose", "sucrose", "maltose", "dextrose", "syrup")
+                    // Camera Preview Section
+                    CameraPreview(
+                        modifier = Modifier
+                            .size(250.dp)
+                            .padding(top = 70.dp)
+                            .background(Color.Gray),
+                        imageCapture = imageCapture
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Recognized Text Section
+                    Text(text = "Recognized Text:", modifier = Modifier.padding(vertical = 8.dp))
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
+                            .padding(16.dp)
+                            .background(Color(0xFFE6E6FA)) // Lavender background for the text area
+                            .padding(16.dp)
+                    ) {
+                        if (recognizedText.isNotEmpty()) {
+                            val sugarKeywords = listOf("glucose", "sugar", "fructose", "sucrose", "maltose", "dextrose", "syrup")
+                            Text(
+                                text = highlightSugars(recognizedText, sugarKeywords),
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Justify,
+                                color = Color.Black,
+                                lineHeight = 54.sp
+                            )
+                        } else {
+                            Text(
+                                text = "No text recognized yet",
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Center,
+                                color = Color.Black
+                            )
+                        }
+                    }
+
+                    // Hidden Sugars Section
+                    Text(text = "Hidden Sugars:")
+                    if (hiddenSugars.isNotEmpty()) {
                         Text(
-                            text = highlightSugars(recognizedText, sugarKeywords),
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Justify, // Justify text
-                            color = Color.Black, // Black text for readability
-                            lineHeight = 54.sp // Adjust line height
+                            text = hiddenSugars.joinToString(", "),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Red
                         )
                     } else {
-                        Text(
-                            text = "No text recognized yet",
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center,
-                            color = Color.Black // Changed to Black for visibility
-                        )
+                        Text(text = "No hidden sugars found.", style = MaterialTheme.typography.bodyMedium)
+                    }
+
+                    // Scan Button
+                    Button(onClick = {
+                        isScanning = true
+                        captureAndRecognizeText(context, imageCapture) { text ->
+                            recognizedText = text
+                            hiddenSugars = findHiddenSugars(text)
+                            isScanning = false
+                        }
+                    }) {
+                        Text(text = "Scan Food Label")
                     }
                 }
-
-                Text(text = "Hidden Sugars:")
-                if (hiddenSugars.isNotEmpty()) {
-                    Text(
-                        text = hiddenSugars.joinToString(", "),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Red
-                    )
-                } else {
-                    Text(text = "No hidden sugars found.", style = MaterialTheme.typography.bodyMedium)
-                }
-
-                Button(onClick = {
-                    captureAndRecognizeText(context, imageCapture) { text ->
-                        recognizedText = text
-                        hiddenSugars = findHiddenSugars(text)
-                    }
-                }) {
-                    Text(text = "Scan Food Label")
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                FoodScannerBottomNavigationBar(navController)
+            } else {
+                RequestCameraPermission(permissionState)
             }
+
         }
     }
 }
 
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun RequestCameraPermission(onGranted: @Composable () -> Unit) {
+fun RequestCameraPermission(onGranted: PermissionState) {
     val permissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
     if (permissionState.status.isGranted) {
-        onGranted()
+        onGranted
     } else {
         LaunchedEffect(Unit) {
             permissionState.launchPermissionRequest()
@@ -249,38 +267,3 @@ fun highlightSugars(text: String, keywords: List<String>): AnnotatedString {
     }
 }
 
-@Composable
-fun FoodScannerBottomNavigationBar(navController: NavController) {
-    BottomAppBar(
-        containerColor = MaterialTheme.colorScheme.primary,
-        content = {
-            Spacer(modifier = Modifier.weight(1f, true))
-
-            IconButton(onClick = { navController.navigate("foodScanner") }) {
-                Icon(imageVector = Icons.Default.Search, contentDescription = "Food Scanner")
-            }
-
-            Spacer(modifier = Modifier.weight(1f, true))
-
-            IconButton(onClick = { navController.navigate("ecommerce") }) {
-                Icon(imageVector = Icons.Rounded.ShoppingCart, contentDescription = "ecommerce")
-            }
-
-            Spacer(modifier = Modifier.weight(1f, true))
-
-            IconButton(onClick = { navController.navigate("home") }) {
-                Icon(imageVector = Icons.Rounded.Home, contentDescription = "Home")
-            }
-
-            Spacer(modifier = Modifier.weight(1f, true))
-
-            IconButton(onClick = { navController.navigate("fruitlist") }) {
-                Icon(imageVector = Icons.Rounded.Info, contentDescription = "Fruit List")
-            }
-
-            Spacer(modifier = Modifier.weight(1f, true))
-
-
-        }
-    )
-}

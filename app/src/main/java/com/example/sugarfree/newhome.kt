@@ -437,11 +437,10 @@ private fun DetoxChallengeSection(navController: NavController) {
 @Composable
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
-        NavItem("Home", Icons.Rounded.Home, "home"),
-        NavItem("Scan", Icons.Default.Search, "foodScanner"),
+        NavItem("ChatBot", Icons.Rounded.Chat, "ChatBot"),
+        NavItem("Scan", Icons.Default.Search, "fruitlist"),
         NavItem("Shop", Icons.Rounded.ShoppingCart, "ecommerce"),
         NavItem("Profile", Icons.Rounded.Person, "profile"),
-        NavItem("fruitlist",  Icons.Rounded.Eco, "fruitlist")
 
     )
     BottomNavigation(
@@ -483,7 +482,7 @@ fun DynamicCalendarSection() {
     val dateFormat = remember { SimpleDateFormat("dd", Locale.getDefault()) }
     val dayFormat = remember { SimpleDateFormat("EEE", Locale.getDefault()) }
     val healthData = remember { mutableMapOf<String, String>() }.apply {
-       // put(dateFormat.format(calendar.time), "120"// Sample glucose data
+        // put(dateFormat.format(calendar.time), "120"// Sample glucose data
     }
 
     Column(
