@@ -1,64 +1,68 @@
 package com.example.sugarfree
 
-
 import WaterIntakeApp
-
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.example.sugarfree.ui.theme.SugarFreeTheme
-
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Initialize Firebase
         FirebaseApp.initializeApp(this)
 
+        // Create Notification Channel
+        createNotificationChannel()
+
         enableEdgeToEdge()  // Custom function for edge-to-edge display
+
         setContent {
             val navController = rememberNavController()
-            val cartViewModel: CartViewModel = viewModel() // Create an instance of CartViewModel
-            val addressViewModel: AddressViewModel by viewModels() // Create an instance of AddressViewModel
+            val cartViewModel: CartViewModel = viewModel()
+            val addressViewModel: AddressViewModel by viewModels()
             val user = FirebaseAuth.getInstance().currentUser
-            val loggedInUserEmail = user?.email ?: "" // Fetch current user's email
-            val ordersViewModel: OrderViewModel = viewModel() // Get ViewModel instance
+            val loggedInUserEmail = user?.email ?: ""
+            val ordersViewModel: OrderViewModel = viewModel()
+
             // Setup Navigation
-            NavHost(navController = navController, startDestination = "home") { // Start with home
-                composable("home") {
-                    MainScreen(navController) // Home composable with profile icon
-                }
-                composable("auth") {
-                    AuthPage(navController) // This handles both login and signup
-                }
+            NavHost(navController = navController, startDestination = "home") {
+                composable("home") { MainScreen(navController) }
+                composable("auth") { AuthPage(navController) }
                 composable("calculator/{calculatorType}", arguments = listOf(
                     navArgument("calculatorType") { type = NavType.StringType }
                 )) { backStackEntry ->
                     val calculatorType = backStackEntry.arguments?.getString("calculatorType") ?: ""
                     CalculatorScreen(navController, calculatorType)
                 }
-                composable("healthCare") {
-                    HealthCareHome(navController)
-                }
-                composable("foodScanner") {
-                    FoodScannerUI(navController)
-                }
+                composable("healthCare") { HealthCareHome(navController) }
+                composable("foodScanner") { FoodScannerUI(navController) }
                 composable("foodscanner") {
                     BarcodeScannerScreen { scannedBarcode ->
                         navController.navigate("foodDetails/$scannedBarcode")
@@ -68,118 +72,86 @@ class MainActivity : ComponentActivity() {
                     val barcode = backStackEntry.arguments?.getString("barcode") ?: ""
                     FetchNutritionInfoScreen(barcode)
                 }
-
-                composable("detox") {
-                    DetoxTimerPage(navController) // Pass the cartViewModel here
-                }
-                composable("fruitlist") {
-                    FruitAppScreen(navController)
-                }
-                composable("healthMonitor") {
-                    HealthMonitor(navController)
-                }
-                composable("symptoms") {
-                    Symptoms()
-                }
-                composable("diet") {
-                    DietPlans()
-                }
-                composable("blood_sugar_checker") {
-                    BloodSugarChecker(navController)
-                }
-                composable("cart") {
-                    CartScreen(navController, cartViewModel) // Pass the navController here
-                }
+                composable("detox") { DetoxTimerPage(navController) }
+                composable("fruitlist") { FruitAppScreen(navController) }
+                composable("healthMonitor") { HealthMonitor(navController) }
+                composable("symptoms") { Symptoms() }
+                composable("diet") { DietPlans() }
+                composable("blood_sugar_checker") { BloodSugarChecker(navController) }
+                composable("cart") { CartScreen(navController, cartViewModel) }
                 composable("checkout") {
                     CheckoutPage(
                         navController = navController,
                         addressViewModel = addressViewModel,
-                        currentUserEmail = "user@example.com", // Pass the current user's email here
-                        cartViewModel = cartViewModel // Pass the cartViewModel if needed
+                        currentUserEmail = loggedInUserEmail,
+                        cartViewModel = cartViewModel
                     )
                 }
                 composable("selectPaymentPage") {
                     SelectPaymentPage(
                         navController = navController,
                         totalAmount = cartViewModel.getTotalPrice()
-
                     )
                 }
                 composable("orderConfirmation") {
-                    OrderConfirmationPage(
-                        navController = navController,
-                        cartViewModel = cartViewModel
-                    )
+                    OrderConfirmationPage(navController, cartViewModel)
                 }
-
-
                 composable("myOrders") {
-
-                    MyOrdersPage(navController = navController, orderViewModel = ordersViewModel, loggedInUserEmail) // Pass ViewModel to MyOrdersPage
+                    MyOrdersPage(navController, ordersViewModel, loggedInUserEmail)
                 }
-
-
-
-                composable("ecommerce") {
-                    ECommercePage(navController, cartViewModel) // Pass the navController here
-                }
-                composable("account") {
-                    MyAccountPage(navController, loggedInUserEmail) // Pass the loggedInUserEmail here
-                }
-                composable("MyProfilePage") {
-                    MyProfilePage(navController) // Pass the navController here
-                }
+                composable("chart") { ReminderScreen(navController) }
+                composable("ecommerce") { ECommercePage(navController, cartViewModel) }
+                composable("account") { MyAccountPage(navController, loggedInUserEmail) }
+                composable("MyProfilePage") { MyProfilePage(navController) }
                 composable("addressBook") {
-                    AddressBookPage(navController, addressViewModel, loggedInUserEmail) // Pass loggedInUserEmail
+                    AddressBookPage(navController, addressViewModel, loggedInUserEmail)
                 }
                 composable("addNewAddress") {
-                    AddNewAddressPage(navController, addressViewModel, loggedInUserEmail) // Pass loggedInUserEmail
+                    AddNewAddressPage(navController, addressViewModel, loggedInUserEmail)
                 }
-                composable("profile") {
-                    ProfilePage(navController,addressViewModel,ordersViewModel) // Pass the navController here
-                }
-                composable("challanges") {
-                    challanges(navController) // Pass the navController here
-                }
-                composable("details1") {
-                    HealthTipsScreen(navController) // Pass the navController here
-                }
-                composable("details2") {
-                    HealthTipsScreen2(navController) // Pass the navController here
-                }
-                composable("details3") {
-                    HealthTipsScreen3(navController) // Pass the navController here
-                }
+                composable("profile") { ProfilePage(navController, addressViewModel, ordersViewModel) }
+                composable("challanges") { challanges(navController) }
+                composable("details1") { HealthTipsScreen(navController) }
+                composable("details2") { HealthTipsScreen2(navController) }
+                composable("details3") { HealthTipsScreen3(navController) }
                 composable("fruitDetails/{fruitName}") { backStackEntry ->
                     val fruitName = backStackEntry.arguments?.getString("fruitName") ?: ""
                     FruitDetailsScreen(fruitName)
                 }
-
                 composable("productDetail/{productId}") { backStackEntry ->
                     val productId = backStackEntry.arguments?.getString("productId")?.toInt() ?: 0
-                    ProductDetailPage(productId = productId, navController = navController, cartViewModel = cartViewModel)
+                    ProductDetailPage(productId, navController, cartViewModel)
                 }
-
-                composable("ChatBot"){
-                    ChatScreen(navController, PaddingValues())
-                }
-
-                composable("Water_intake") {
-                    WaterIntakeApp(navController)  // Pass the navController here
-                }
-
-
+                composable("ChatBot") { ChatScreen(navController, PaddingValues()) }
+                composable("Reminders") { ReminderScreen(navController) }
+                composable("Water_intake") { WaterIntakeApp(navController) }
             }
+        }
+    }
+
+    /**
+     * Function to create a notification channel (Required for Android 8.0 and above)
+     */
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "sugarfree_notifications", // Unique channel ID
+                "Sugar Free Alerts",  // User-visible name
+                NotificationManager.IMPORTANCE_HIGH  // Importance level
+            ).apply {
+                description = "Notifications for sugar intake alerts and reminders"
+            }
+
+            // Register the channel with the system
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
     }
 }
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+    Text(text = "Hello $name!", modifier = modifier)
 }
 
 @Preview(showBackground = true)

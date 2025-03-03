@@ -596,6 +596,11 @@ fun MiddleBoxSection(navController: NavController) {
                         label = "Health",
                         onClick = { navController.navigate("healthCare") }
                     )
+                    QuickActionButton(
+                        icon = Icons.Default.HealthAndSafety,
+                        label = "Reminder",
+                        onClick = { navController.navigate("Reminders") }
+                    )
                 }
             }
 
