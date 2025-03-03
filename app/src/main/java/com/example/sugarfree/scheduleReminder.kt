@@ -12,11 +12,15 @@ fun scheduleReminder(context: Context, reminder: ReminderPlan) {
     val intent = Intent(context, ReminderBroadcastReceiver::class.java).apply {
         putExtra("title", reminder.title)
         putExtra("message", reminder.notificationMessage)
-        putExtra("id", reminder.id.hashCode()) // Pass the reminder ID
     }
-    val pendingIntent = PendingIntent.getBroadcast(context, reminder.id.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    val pendingIntent = PendingIntent.getBroadcast(
+        context,
+        reminder.id.hashCode(),
+        intent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
 
-    alarmManager.setExactAndAllowWhileIdle(
+    alarmManager.setExact(
         AlarmManager.RTC_WAKEUP,
         reminder.time,
         pendingIntent

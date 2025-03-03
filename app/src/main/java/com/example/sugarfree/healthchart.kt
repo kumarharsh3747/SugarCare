@@ -1,5 +1,7 @@
 package com.example.sugarfree
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -128,6 +130,13 @@ fun ReminderScreen(navController: NavHostController) {
             },
             onDismiss = { showDialog = false },
             onConfirm = { title, details, message, time ->
+                // Validation: Ensure the title is not empty
+                if (title.isEmpty()) {
+                    Toast.makeText(context, "Reminder title cannot be empty", Toast.LENGTH_SHORT).show()
+                    return@ReminderDialog
+                }
+
+                // Create a new ReminderPlan object
                 val newReminder = ReminderPlan(
                     id = editReminder?.id ?: UUID.randomUUID().toString(),
                     title = title,
@@ -135,12 +144,18 @@ fun ReminderScreen(navController: NavHostController) {
                     notificationMessage = message,
                     time = time.timeInMillis
                 )
+
+                // Add or edit the reminder in the ViewModel
                 if (editReminder == null) {
                     viewModel.addReminder(newReminder)
                 } else {
                     viewModel.editReminder(newReminder)
                 }
+
+                // Schedule the reminder
                 scheduleReminder(context, newReminder)
+
+                // Close the dialog
                 showDialog = false
             }
         )
@@ -244,6 +259,8 @@ fun ReminderDialog(
     var reminderDetails by remember { mutableStateOf(initialDetails) }
     var notificationMessage by remember { mutableStateOf(initialNotificationMessage) }
     var selectedTime by remember { mutableStateOf(initialTime) }
+    val context = LocalContext.current
+
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -291,12 +308,18 @@ fun ReminderDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Time Picker Placeholder
-                Text(text = "Selected Time: ${selectedTime.time}")
-                Button(onClick = {
-                    // Open TimePicker here
-                }) {
-                    Text("Select Time")
-                }
+                TimePickerDialog(
+                    context = context,
+                    initialHour = selectedTime.get(Calendar.HOUR_OF_DAY),
+                    initialMinute = selectedTime.get(Calendar.MINUTE),
+                    onTimeSet = { hour, minute ->
+                        selectedTime = Calendar.getInstance().apply {
+                            set(Calendar.HOUR_OF_DAY, hour)
+                            set(Calendar.MINUTE, minute)
+                        }
+                    }
+                )
+
 
                 Row(
                     modifier = Modifier
@@ -321,6 +344,27 @@ fun ReminderDialog(
         }
     }
 }
+@Composable
+private fun TimePickerDialog(
+    context: Context,
+    initialHour: Int,
+    initialMinute: Int,
+    onTimeSet: (Int, Int) -> Unit
+) {
+    val timePickerDialog = android.app.TimePickerDialog(
+        context,
+        { _, hour, minute -> onTimeSet(hour, minute) },
+        initialHour,
+        initialMinute,
+        true
+    )
+
+    DisposableEffect(Unit) {
+        timePickerDialog.show()
+        onDispose { timePickerDialog.dismiss() }
+    }
+}
+
 data class ReminderPlan(
     val id: String,
     val title: String,
