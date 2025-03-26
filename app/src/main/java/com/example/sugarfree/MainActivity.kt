@@ -11,7 +11,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,31 +26,33 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.sugarfree.Reminder.HydrateReminderScreen
+import com.example.sugarfree.Reminder.MealReminderScreen
+import com.example.sugarfree.Reminder.MedicineReminderScreen
+import com.example.sugarfree.Reminder.ReminderScreen
 import com.example.sugarfree.ui.theme.SugarFreeTheme
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            // Permission granted, proceed with notification logic
-            println("POST_NOTIFICATIONS permission granted.")
-        } else {
-            // Permission denied, handle accordingly (e.g., show a dialog or disable notifications)
-            println("POST_NOTIFICATIONS permission denied.")
-        }
-    }
-
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Check and request POST_NOTIFICATIONS permission for Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                val REQUEST_CODE_POST_NOTIFICATIONS = 0
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    REQUEST_CODE_POST_NOTIFICATIONS
+                )
             }
         }
         // Initialize Firebase
@@ -118,7 +119,6 @@ class MainActivity : ComponentActivity() {
                 composable("myOrders") {
                     MyOrdersPage(navController, ordersViewModel, loggedInUserEmail)
                 }
-                composable("chart") { ReminderScreen(navController) }
                 composable("ecommerce") { ECommercePage(navController, cartViewModel) }
                 composable("account") { MyAccountPage(navController, loggedInUserEmail) }
                 composable("MyProfilePage") { MyProfilePage(navController) }
@@ -144,6 +144,15 @@ class MainActivity : ComponentActivity() {
                 composable("ChatBot") { ChatScreen(navController, PaddingValues()) }
                 composable("Reminders") { ReminderScreen(navController) }
                 composable("Water_intake") { WaterIntakeApp(navController) }
+                composable("MedicineReminder") {
+                    MedicineReminderScreen(navController)
+                }
+                composable("MealReminder") {
+                    MealReminderScreen(navController)
+                }
+                composable("HydrateReminder") {
+                    HydrateReminderScreen(navController)
+                }
             }
         }
     }
@@ -165,18 +174,5 @@ class MainActivity : ComponentActivity() {
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(text = "Hello $name!", modifier = modifier)
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SugarFreeTheme {
-        Greeting("Android")
     }
 }

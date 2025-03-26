@@ -1,7 +1,11 @@
-package com.example.sugarfree
+package com.example.sugarfree.Reminder
 
+import android.app.AlarmManager
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -22,7 +27,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import java.util.*
+import android.provider.Settings
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun ReminderScreen(navController: NavHostController) {
     val viewModel: ReminderViewModel = viewModel()
@@ -61,19 +68,25 @@ fun ReminderScreen(navController: NavHostController) {
                     icon = Icons.Default.LocalDrink,
                     label = "Hydrate",
                     color = Color(0xFF2196F3),
-                    onClick = {}
+                    onClick = {
+                        navController.navigate("HydrateReminder")
+                    }
                 )
                 QuickReminderButton(
                     icon = Icons.Default.Restaurant,
                     label = "Meal",
                     color = Color(0xFF4CAF50),
-                    onClick = {}
+                    onClick = {
+                        navController.navigate("MealReminder")
+                    }
                 )
                 QuickReminderButton(
                     icon = Icons.Default.MedicalServices,
                     label = "Medicine",
                     color = Color(0xFFE91E63),
-                    onClick = {}
+                    onClick = {
+                        navController.navigate("MedicineReminder")
+                    }
                 )
             }
 
@@ -245,6 +258,7 @@ fun ReminderPlanItem(plan: ReminderPlan, onEdit: () -> Unit, onDelete: () -> Uni
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun ReminderDialog(
     title: String,
@@ -333,7 +347,20 @@ fun ReminderDialog(
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = {
-                            onConfirm(reminderTitle, reminderDetails, notificationMessage, selectedTime)
+                            // Check if the app can schedule exact alarms
+                            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                            if (!alarmManager.canScheduleExactAlarms()) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                    // Prompt the user to grant the SCHEDULE_EXACT_ALARM permission
+                                    val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                                    context.startActivity(intent)
+                                } else {
+                                    // Handle older devices (no action needed for pre-API 31)
+                                }
+                            } else {
+                                // Proceed with saving the reminder
+                                onConfirm(reminderTitle, reminderDetails, notificationMessage, selectedTime)
+                            }
                         },
                         enabled = reminderTitle.isNotEmpty()
                     ) {

@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.storage.ktx)
     implementation(libs.play.services.mlkit.barcode.scanning)
+    implementation(libs.androidx.tools.core)
 
     // Testing Dependencies
     testImplementation(libs.junit)

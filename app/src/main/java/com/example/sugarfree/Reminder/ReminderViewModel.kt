@@ -1,4 +1,4 @@
-package com.example.sugarfree
+package com.example.sugarfree.Reminder
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
