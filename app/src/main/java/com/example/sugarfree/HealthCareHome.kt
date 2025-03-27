@@ -56,7 +56,7 @@ fun HealthCareHome(navController: NavController) {
             )
         },
         bottomBar = {
-            BottomNavigationBar()
+            BottomNavigationBar(navController)
         }
     ) { paddingValues ->
         Column(
@@ -114,32 +114,32 @@ fun HealthCard(title: String, icon: Int, onClick: () -> Unit) {
         }
     }
 }
-
-@Composable
-fun BottomNavigationBar() {
-    BottomNavigation(
-        modifier = Modifier.height(48.dp), // Reduced height
-        backgroundColor = Color(0xFF008080), // Set BottomNavigation background color (Teal)
-        contentColor = Color(0xFFDEEAEA) // Set text and icon color
-    ) {
-        BottomNavigationItem(
-            icon = { Icon(painterResource(id = R.drawable.ic_calculator), contentDescription = "Calculate") },
-            label = { Text("Calculate", fontSize = 12.sp) }, // Reduced text size
-            selected = true,
-            onClick = {}
-        )
-        BottomNavigationItem(
-            icon = { Icon(painterResource(id = R.drawable.ic_fitness), contentDescription = "Fitness") },
-            label = { Text("Fitness", fontSize = 12.sp) }, // Reduced text size
-            selected = false,
-            onClick = {}
-        )
-        BottomNavigationItem(
-            icon = { Icon(painterResource(id = R.drawable.ic_profile), contentDescription = "Profile") },
-            label = { Text("Profile", fontSize = 12.sp) }, // Reduced text size
-            selected = false,
-            onClick = {}
-        )
-    }
-}
-
+//
+//@Composable
+//fun BottomNavigationBar(navController: NavController) {
+//    BottomNavigation(
+//        modifier = Modifier.height(48.dp), // Reduced height
+//        backgroundColor = Color(0xFF008080), // Set BottomNavigation background color (Teal)
+//        contentColor = Color(0xFFDEEAEA) // Set text and icon color
+//    ) {
+//        BottomNavigationItem(
+//            icon = { Icon(painterResource(id = R.drawable.ic_calculator), contentDescription = "Calculate") },
+//            label = { Text("Calculate", fontSize = 12.sp) }, // Reduced text size
+//            selected = true,
+//            onClick = {}
+//        )
+//        BottomNavigationItem(
+//            icon = { Icon(painterResource(id = R.drawable.ic_fitness), contentDescription = "Fitness") },
+//            label = { Text("Fitness", fontSize = 12.sp) }, // Reduced text size
+//            selected = false,
+//            onClick = {}
+//        )
+//        BottomNavigationItem(
+//            icon = { Icon(painterResource(id = R.drawable.ic_profile), contentDescription = "Profile") },
+//            label = { Text("Profile", fontSize = 12.sp) }, // Reduced text size
+//            selected = false,
+//            onClick = {}
+//        )
+//    }
+//}
+//

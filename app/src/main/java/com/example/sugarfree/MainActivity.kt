@@ -16,6 +16,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
@@ -31,6 +32,7 @@ import com.example.sugarfree.Reminder.MealReminderScreen
 import com.example.sugarfree.Reminder.MedicineReminderScreen
 import com.example.sugarfree.Reminder.ReminderScreen
 import com.example.sugarfree.ui.theme.SugarFreeTheme
+//import com.example.sugarfreeupdated.HealthChallengeScreen
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 
@@ -131,8 +133,14 @@ class MainActivity : ComponentActivity() {
                 composable("profile") { ProfilePage(navController, addressViewModel, ordersViewModel) }
                 composable("challanges") { challanges(navController) }
                 composable("details1") { HealthTipsScreen(navController) }
-                composable("details2") { HealthTipsScreen2(navController) }
-                composable("details3") { HealthTipsScreen3(navController) }
+                composable("details2") {
+                    val gameState = remember { GameState() }
+                    HealthTipsScreen2(navController, gameState)
+                }
+                composable("details3") {
+                    val gameState = remember { GameState() }
+                    HealthTipsScreen3(navController, gameState)
+                }
                 composable("fruitDetails/{fruitName}") { backStackEntry ->
                     val fruitName = backStackEntry.arguments?.getString("fruitName") ?: ""
                     FruitDetailsScreen(fruitName)
@@ -153,6 +161,8 @@ class MainActivity : ComponentActivity() {
                 composable("HydrateReminder") {
                     HydrateReminderScreen(navController)
                 }
+              //  composable("game"){   HealthChallengeScreen(navController = navController)}
+
             }
         }
     }
@@ -171,7 +181,7 @@ class MainActivity : ComponentActivity() {
             }
 
             // Register the channel with the system
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }
