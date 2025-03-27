@@ -587,8 +587,8 @@ fun MiddleBoxSection(navController: NavController) {
                         onClick = { navController.navigate("healthMonitor") }
                     )
                     QuickActionButton(
-                        icon = Icons.Default.AddAlarm,
-                        label = "Meals",
+                        icon = Icons.Default.WaterDrop,
+                        label = "Water Intake",
                         onClick = { navController.navigate("Water_intake") }
                     )
                     QuickActionButton(
@@ -597,7 +597,7 @@ fun MiddleBoxSection(navController: NavController) {
                         onClick = { navController.navigate("healthCare") }
                     )
                     QuickActionButton(
-                        icon = Icons.Default.HealthAndSafety,
+                        icon = Icons.Default.AddAlarm,
                         label = "Reminder",
                         onClick = { navController.navigate("Reminders") }
                     )

@@ -1,4 +1,5 @@
 package com.example.sugarfree.Reminder
+
 import android.content.Context
 import android.os.Build
 import android.widget.Toast
@@ -7,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -31,6 +33,7 @@ fun MedicineReminderScreen(navController: NavHostController) {
     var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val viewModel: ReminderViewModel = viewModel()
+    val reminders by viewModel.reminders.collectAsState()
 
     Box(
         modifier = Modifier
@@ -49,6 +52,25 @@ fun MedicineReminderScreen(navController: NavHostController) {
                 color = MaterialTheme.colors.primary,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
+            Spacer(modifier = Modifier.height(16.dp))
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                items(reminders.filter { it.title.contains("Medicine", ignoreCase = true) }) { plan ->
+                    ReminderPlanItem(
+                        plan = plan,
+                        onEdit = {
+                            // Navigate to edit dialog or pass data to ReminderDialog
+                            showDialog = true
+                        },
+                        onDelete = {
+                            viewModel.deleteReminder(plan.id)
+                        }
+                    )
+                }
+            }
             FloatingActionButton(
                 onClick = { showDialog = true },
                 backgroundColor = MaterialTheme.colors.primary,
@@ -63,10 +85,12 @@ fun MedicineReminderScreen(navController: NavHostController) {
         val initialTime = Calendar.getInstance()
         ReminderDialog(
             title = "Add Medicine Reminder",
-            initialTitle = "",
-            initialDetails = "",
-            initialNotificationMessage = "",
-            initialTime = initialTime,
+            initialTitle = "Medicine",
+            initialDetails = "Have a Medicine",
+            initialNotificationMessage = "Time for a Medicine!",
+            initialTime = initialTime.apply {
+                timeInMillis = System.currentTimeMillis() + 30 * 60 * 1000 // Default 30 minutes from now
+            },
             onDismiss = { showDialog = false },
             onConfirm = { title, details, message, time ->
                 if (title.isEmpty()) {

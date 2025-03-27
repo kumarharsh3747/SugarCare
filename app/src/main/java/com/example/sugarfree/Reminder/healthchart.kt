@@ -28,17 +28,34 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import java.util.*
 import android.provider.Settings
+import com.google.firebase.auth.FirebaseAuth
+
+fun isUserLoggedIn(): Boolean {
+    val firebaseAuth = FirebaseAuth.getInstance()
+    return firebaseAuth.currentUser != null
+}
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun ReminderScreen(navController: NavHostController) {
+    val context = LocalContext.current
+
+    // Check if the user is logged in
+    if (!isUserLoggedIn()) {
+        // Redirect to the login screen
+        LaunchedEffect(Unit) {
+            navController.navigate("auth") {
+                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+            }
+        }
+        return
+    }
+
+    // Existing code for the ReminderScreen
     val viewModel: ReminderViewModel = viewModel()
     val reminders by viewModel.reminders.collectAsState()
-
     var showDialog by remember { mutableStateOf(false) }
     var editReminder by remember { mutableStateOf<ReminderPlan?>(null) }
-
-    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -57,7 +74,6 @@ fun ReminderScreen(navController: NavHostController) {
                 color = MaterialTheme.colors.primary,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -89,16 +105,13 @@ fun ReminderScreen(navController: NavHostController) {
                     }
                 )
             }
-
             Spacer(modifier = Modifier.height(16.dp))
-
             Text(
                 text = "Scheduled Plans",
                 style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.secondary,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
-
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -117,7 +130,6 @@ fun ReminderScreen(navController: NavHostController) {
                     )
                 }
             }
-
             FloatingActionButton(
                 onClick = {
                     editReminder = null
@@ -130,7 +142,6 @@ fun ReminderScreen(navController: NavHostController) {
             }
         }
     }
-
     if (showDialog) {
         val initialTime = Calendar.getInstance()
         ReminderDialog(
@@ -143,13 +154,10 @@ fun ReminderScreen(navController: NavHostController) {
             },
             onDismiss = { showDialog = false },
             onConfirm = { title, details, message, time ->
-                // Validation: Ensure the title is not empty
                 if (title.isEmpty()) {
                     Toast.makeText(context, "Reminder title cannot be empty", Toast.LENGTH_SHORT).show()
                     return@ReminderDialog
                 }
-
-                // Create a new ReminderPlan object
                 val newReminder = ReminderPlan(
                     id = editReminder?.id ?: UUID.randomUUID().toString(),
                     title = title,
@@ -157,18 +165,12 @@ fun ReminderScreen(navController: NavHostController) {
                     notificationMessage = message,
                     time = time.timeInMillis
                 )
-
-                // Add or edit the reminder in the ViewModel
                 if (editReminder == null) {
                     viewModel.addReminder(newReminder)
                 } else {
                     viewModel.editReminder(newReminder)
                 }
-
-                // Schedule the reminder
                 scheduleReminder(context, newReminder)
-
-                // Close the dialog
                 showDialog = false
             }
         )
@@ -306,7 +308,7 @@ fun ReminderDialog(
                 OutlinedTextField(
                     value = reminderDetails,
                     onValueChange = { reminderDetails = it },
-                    label = { Text("Details (e.g., 2 doses of medicine)") },
+                    label = { Text("Details") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -393,9 +395,9 @@ private fun TimePickerDialog(
 }
 
 data class ReminderPlan(
-    val id: String,
-    val title: String,
+    val id: String = "",
+    val title: String = "",
     val details: String = "",
     val notificationMessage: String = "",
-    val time: Long
+    val time: Long = 0L
 )

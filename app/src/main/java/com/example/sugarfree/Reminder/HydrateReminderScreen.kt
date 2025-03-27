@@ -1,7 +1,9 @@
 package com.example.sugarfree.Reminder
 
 import android.content.Context
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -25,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import java.util.*
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun HydrateReminderScreen(navController: NavHostController) {
     var showDialog by remember { mutableStateOf(false) }
