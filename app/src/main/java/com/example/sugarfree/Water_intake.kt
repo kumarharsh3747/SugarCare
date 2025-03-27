@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -34,11 +35,13 @@ import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.*
+import com.example.sugarfree.Reminder.*
+
 
 data class WaterIntakeData(
     val date: LocalDate,
     val amountInLiters: Double,
-    val goalInLiters: Double = 3.1, // Default goal
+    val goalInLiters: Double = 5.0, // Default goal
     val containers: List<WaterContainer> = emptyList(),
     val intakeLog: List<WaterIntakeEntry> = emptyList()
 )
@@ -63,12 +66,16 @@ data class WaterIntakeEntry(
 @Composable
 fun WaterIntakeApp(navController: NavController) {
     // State for the entire app
+    val configuration = LocalConfiguration.current
+    val isCompactScreen = configuration.screenWidthDp < 600
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var showCalendar by remember { mutableStateOf(false) }
     var showAddCustomDialog by remember { mutableStateOf(false) }
     var waterIntakeData by remember { mutableStateOf(generateSampleData(selectedDate)) }
     var showSuccessMessage by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    var showEditGoalDialog by remember { mutableStateOf(false) }
+
 
 
     // Function to add water intake
@@ -94,6 +101,11 @@ fun WaterIntakeApp(navController: NavController) {
             delay(2000)
             showSuccessMessage = false
         }
+    }
+    fun updateWaterIntakeGoal(newGoal: Double) {
+        waterIntakeData = waterIntakeData.copy(
+            goalInLiters = newGoal
+        )
     }
 
     Surface(
@@ -144,8 +156,10 @@ fun WaterIntakeApp(navController: NavController) {
                         },
                         modifier = Modifier
                             .weight(1f)
-                            .height(400.dp)
+                            .height(400.dp),
+                        isCompactScreen = isCompactScreen
                     )
+
                 }
 
                 Row(
@@ -155,20 +169,20 @@ fun WaterIntakeApp(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "BENEFITS",
-                        color = Color(0xFF3F51B5),
-                        fontWeight = FontWeight.Bold
-                    )
+                    EditButton(onClick = { showEditGoalDialog = true })
+                    ReminderButton(onClick = { navController.navigate("HydrateReminder")})
 
-                    EditButton()
-
-                    Text(
-                        text = "GOAL",
-                        color = Color(0xFF3F51B5),
-                        fontWeight = FontWeight.Bold
-                    )
                 }
+            }
+            if (showEditGoalDialog) {
+                EditGoalDialog(
+                    currentGoal = waterIntakeData.goalInLiters,
+                    onConfirm = { newGoal ->
+                        updateWaterIntakeGoal(newGoal)
+                        showEditGoalDialog = false
+                    },
+                    onDismiss = { showEditGoalDialog = false }
+                )
             }
 
             // Success message
@@ -403,7 +417,8 @@ fun HydrationInfo(
     waterIntakeData: WaterIntakeData,
     onAddCustomClick: () -> Unit,
     onContainerClick: (WaterContainer) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isCompactScreen: Boolean
 ) {
     val percentageValue = (calculatePercentage(
         waterIntakeData.amountInLiters,
@@ -412,6 +427,18 @@ fun HydrationInfo(
 
     val remainingLiters = (waterIntakeData.goalInLiters - waterIntakeData.amountInLiters)
         .coerceAtLeast(0.0)
+
+    // Standard container options
+    val containerOptions = listOf(
+        WaterContainer("Shot Glass", 75, 2.5, "🥃"),
+        WaterContainer("Goblet", 125, 4.2, "🍷"),
+        WaterContainer("Small Mug", 250, 8.4, "☕"),
+        WaterContainer("Tumbler", 330, 11.1, "🥤"),
+        WaterContainer("Pint", 500, 16.9, "🍺"),
+        WaterContainer("Large Mug", 750, 25.3, "🍵"),
+        WaterContainer("1L Bottle", 1000, 33.8, "🍶"),
+        WaterContainer("Pitcher", 1500, 50.7, "🏺")
+    )
 
     Column(
         modifier = modifier
@@ -470,32 +497,28 @@ fun HydrationInfo(
             color = Color.Black
         )
 
-        // Standard container options
-        val containerOptions = listOf(
-            WaterContainer("Shot Glass", 75, 2.5, "🥃"),
-            WaterContainer("Goblet", 125, 4.2, "🍷"),
-            WaterContainer("Small Mug", 250, 8.4, "☕"),
-            WaterContainer("Tumbler", 330, 11.1, "🥤"),
-            WaterContainer("Pint", 500, 16.9, "🍺"),
-            WaterContainer("Large Mug", 750, 25.3, "🍵"),
-            WaterContainer("1L Bottle", 1000, 33.8, "🍶"),
-            WaterContainer("Pitcher", 1500, 50.7, "🏺")
-        )
-
-        // Container options grid
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.height(200.dp)
+        // Scrollable LazyVerticalGrid
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 200.dp, max = 300.dp) // Set min and max height
         ) {
-            items(containerOptions) { container ->
-                ContainerOption(
-                    name = container.name,
-                    volume = "${container.volumeInMl} ml / ${container.volumeInOz} fl. oz",
-                    icon = container.icon,
-                    onClick = { onContainerClick(container) }
-                )
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 200.dp, max = 300.dp) // Allow scrolling
+            ) {
+                items(containerOptions) { container ->
+                    ContainerOption(
+                        name = container.name,
+                        volume = "${container.volumeInMl} ml / ${container.volumeInOz} fl. oz",
+                        icon = container.icon,
+                        onClick = { onContainerClick(container) }
+                    )
+                }
             }
         }
     }
@@ -665,9 +688,9 @@ fun AddCustomIntakeDialog(
 }
 
 @Composable
-fun EditButton() {
+fun EditButton(onClick: () -> Unit) {
     Button(
-        onClick = { /* Edit Intake */ },
+        onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -679,6 +702,164 @@ fun EditButton() {
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = "Edit Intake",
+            color = Color.White
+        )
+    }
+}
+
+@Composable
+fun EditGoalDialog(
+    currentGoal: Double,
+    onConfirm: (Double) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var goalText by remember { mutableStateOf(String.format("%.1f", currentGoal)) }
+    var selectedUnit by remember { mutableStateOf("L") }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Edit Daily Water Intake Goal",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = goalText,
+                        onValueChange = {
+                            // Allow only digits and one decimal point
+                            val filtered = it.replace(",", ".")
+                            if (filtered.count { it == '.' } <= 1 &&
+                                filtered.replace(".", "").all { it.isDigit() }) {
+                                goalText = filtered
+                            }
+                        },
+                        modifier = Modifier.weight(2f),
+                        label = { Text("Goal Amount") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    // Unit selector
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .border(
+                                    width = 1.dp,
+                                    color = Color.Gray,
+                                    shape = RoundedCornerShape(4.dp)
+                                )
+                                .padding(8.dp)
+                        ) {
+                            var expanded by remember { mutableStateOf(false) }
+
+                            Text(
+                                text = selectedUnit,
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = "Select Unit",
+                                modifier = Modifier.clickable { expanded = true }
+                            )
+
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("L") },
+                                    onClick = {
+                                        selectedUnit = "L"
+                                        expanded = false
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("ml") },
+                                    onClick = {
+                                        selectedUnit = "ml"
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Cancel")
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Button(
+                        onClick = {
+                            val amount = goalText.toDoubleOrNull() ?: currentGoal
+                            val finalGoal = if (selectedUnit == "ml") {
+                                amount / 1000.0 // Convert ml to L
+                            } else {
+                                amount
+                            }
+                            onConfirm(finalGoal)
+                        },
+                        enabled = goalText.isNotEmpty() &&
+                                goalText.toDoubleOrNull()?.let { it > 0 } ?: false,
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
+                    ) {
+                        Text("Update Goal")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ReminderButton(onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.AddAlarm,
+            contentDescription = "Reminder",
+            tint = Color.White
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = "Reminder",
             color = Color.White
         )
     }
