@@ -2,6 +2,7 @@ package com.example.sugarfree.Reminder
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -9,6 +10,11 @@ import kotlinx.coroutines.launch
 
 class ReminderViewModel : ViewModel() {
     private val firestore = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
+
+    // Get the current user's UID
+    private val currentUserUid: String?
+        get() = auth.currentUser?.uid
 
     // StateFlow for reminders
     private val _reminders = MutableStateFlow<List<ReminderPlan>>(emptyList())
@@ -19,12 +25,18 @@ class ReminderViewModel : ViewModel() {
     val error: StateFlow<String?> get() = _error
 
     init {
-        // Fetch reminders from Firestore
+        // Fetch reminders from Firestore for the current user
         fetchReminders()
     }
 
     private fun fetchReminders() {
-        firestore.collection("reminders")
+        val uid = currentUserUid
+        if (uid == null) {
+            _error.value = "User not authenticated"
+            return
+        }
+
+        firestore.collection("users").document(uid).collection("reminders")
             .addSnapshotListener { snapshot, exception ->
                 if (exception != null) {
                     // Handle Firestore errors
@@ -39,7 +51,14 @@ class ReminderViewModel : ViewModel() {
     }
 
     fun addReminder(reminder: ReminderPlan) {
-        firestore.collection("reminders").document(reminder.id).set(reminder)
+        val uid = currentUserUid
+        if (uid == null) {
+            _error.value = "User not authenticated"
+            return
+        }
+
+        firestore.collection("users").document(uid).collection("reminders").document(reminder.id)
+            .set(reminder)
             .addOnSuccessListener {
                 // Success: No action needed
             }
@@ -50,7 +69,13 @@ class ReminderViewModel : ViewModel() {
     }
 
     fun deleteReminder(id: String) {
-        firestore.collection("reminders").document(id).delete()
+        val uid = currentUserUid
+        if (uid == null) {
+            _error.value = "User not authenticated"
+            return
+        }
+
+        firestore.collection("users").document(uid).collection("reminders").document(id).delete()
             .addOnSuccessListener {
                 // Success: No action needed
             }
@@ -61,7 +86,14 @@ class ReminderViewModel : ViewModel() {
     }
 
     fun editReminder(updatedReminder: ReminderPlan) {
-        firestore.collection("reminders").document(updatedReminder.id).set(updatedReminder)
+        val uid = currentUserUid
+        if (uid == null) {
+            _error.value = "User not authenticated"
+            return
+        }
+
+        firestore.collection("users").document(uid).collection("reminders").document(updatedReminder.id)
+            .set(updatedReminder)
             .addOnSuccessListener {
                 // Success: No action needed
             }
