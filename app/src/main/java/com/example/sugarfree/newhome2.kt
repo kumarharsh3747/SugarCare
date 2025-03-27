@@ -199,10 +199,17 @@ private fun QuickActionsRow(navController: NavController) {
         }
     }
 }
-
 @Composable
 private fun WeeklyOverview() {
-    val days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+    val weekData = listOf(
+        "Mon" to "Exercise",
+        "Tue" to "Hydration",
+        "Wed" to "Yoga",
+        "Thu" to "Meditation",
+        "Fri" to "Healthy Diet",
+        "Sat" to "Mental Wellness",
+        "Sun" to "Rest & Recovery"
+    )
 
     ElevatedCard(
         modifier = Modifier
@@ -210,37 +217,50 @@ private fun WeeklyOverview() {
             .padding(16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Weekly Summary",
+            Text(
+                "Weekly Health Plan",
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
                     color = PrimaryColor
-                ))
+                )
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(days) { day ->
+                items(weekData) { (day, activity) ->
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(day,
+                        Text(
+                            day,
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = Color.Gray
-                            ))
+                            )
+                        )
                         Spacer(modifier = Modifier.height(4.dp))
                         Box(
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(50.dp)
                                 .background(
                                     color = SecondaryColor.copy(alpha = 0.2f),
                                     shape = CircleShape
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("${(0..30).random()}",
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = PrimaryColor,
-                                    fontWeight = FontWeight.Bold
-                                ))
+                            Icon(
+                                imageVector = Icons.Default.Favorite, // Change to relevant icons
+                                contentDescription = activity,
+                                tint = PrimaryColor,
+                                modifier = Modifier.size(24.dp)
+                            )
                         }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            activity,
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = PrimaryColor,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
                     }
                 }
             }
