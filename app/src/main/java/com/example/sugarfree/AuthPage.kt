@@ -23,6 +23,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.VisualTransformation
 
+// Color palette matching the screenshot
+object SugarFreeColors {
+    val Background = Color(0xFFF5F5F5)
+    val Primary = Color(0xFF5E7C8B)
+    val Secondary = Color(0xFFB0BEC5)
+    val TextPrimary = Color(0xFF37474F)
+    val TextSecondary = Color(0xFF607D8B)
+}
+
 @Composable
 fun AuthPage(navController: NavController, returnTo: String? = null) {
     var isLoginMode by remember { mutableStateOf(true) }
@@ -43,29 +52,40 @@ fun LoginPage(navController: NavController, returnTo: String? = null, onSwitchTo
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(Color(0xFFB2DFDB), Color.White))),
+            .background(SugarFreeColors.Background),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .padding(16.dp)
-                .background(Color.White, shape = MaterialTheme.shapes.medium)
+                .padding(24.dp)
+                .background(Color.White, shape = MaterialTheme.shapes.large)
                 .padding(32.dp)
-                .border(1.dp, Color.LightGray, shape = MaterialTheme.shapes.medium)
-                .shadow(4.dp, shape = MaterialTheme.shapes.medium)
+//                .shadow(4.dp, shape = MaterialTheme.shapes.large)
         ) {
             Text(
-                text = "Login",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 24.dp)
+                text = "Welcome Back",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Medium,
+                color = SugarFreeColors.TextPrimary,
+                modifier = Modifier.padding(bottom = 32.dp)
             )
 
-            CustomTextField(value = email, placeholder = "Email") { email = it }
+            CustomTextField(
+                value = email,
+                placeholder = "Email",
+                placeholderColor = SugarFreeColors.TextSecondary
+            ) { email = it }
+
             Spacer(modifier = Modifier.height(16.dp))
-            CustomTextField(value = password, placeholder = "Password", isPassword = true) { password = it }
+
+            CustomTextField(
+                value = password,
+                placeholder = "Password",
+                isPassword = true,
+                placeholderColor = SugarFreeColors.TextSecondary
+            ) { password = it }
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -93,22 +113,29 @@ fun LoginPage(navController: NavController, returnTo: String? = null, onSwitchTo
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
+                    .padding(top = 16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = SugarFreeColors.Primary
+                ),
+                shape = MaterialTheme.shapes.medium
             ) {
-                Text(text = "Login", color = Color.White)
+                Text(
+                    text = "Login",
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Don’t have an account? Sign Up",
+                text = "Don't have an account? Sign Up",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
                     .clickable { onSwitchToSignup() },
                 textAlign = TextAlign.Center,
-                color = Color.Gray
+                color = SugarFreeColors.TextSecondary
             )
         }
     }
@@ -124,31 +151,49 @@ fun SignupPage(navController: NavController, returnTo: String? = null, onSwitchT
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(Color(0xFFECEFF1), Color.White))),
+            .background(SugarFreeColors.Background),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .padding(16.dp)
-                .background(Color.White, shape = MaterialTheme.shapes.medium)
+                .padding(24.dp)
+                .background(Color.White, shape = MaterialTheme.shapes.large)
                 .padding(32.dp)
-                .border(1.dp, Color.LightGray, shape = MaterialTheme.shapes.medium)
-                .shadow(4.dp, shape = MaterialTheme.shapes.medium)
+//                .shadow(4.dp, shape = MaterialTheme.shapes.large)
         ) {
             Text(
-                text = "Sign Up",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 24.dp)
+                text = "Create Account",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Medium,
+                color = SugarFreeColors.TextPrimary,
+                modifier = Modifier.padding(bottom = 32.dp)
             )
 
-            CustomTextField(value = email, placeholder = "Email") { email = it }
+            CustomTextField(
+                value = email,
+                placeholder = "Email",
+                placeholderColor = SugarFreeColors.TextSecondary
+            ) { email = it }
+
             Spacer(modifier = Modifier.height(16.dp))
-            CustomTextField(value = password, placeholder = "Password", isPassword = true) { password = it }
+
+            CustomTextField(
+                value = password,
+                placeholder = "Password",
+                isPassword = true,
+                placeholderColor = SugarFreeColors.TextSecondary
+            ) { password = it }
+
             Spacer(modifier = Modifier.height(16.dp))
-            CustomTextField(value = confirmPassword, placeholder = "Confirm Password", isPassword = true) { confirmPassword = it }
+
+            CustomTextField(
+                value = confirmPassword,
+                placeholder = "Confirm Password",
+                isPassword = true,
+                placeholderColor = SugarFreeColors.TextSecondary
+            ) { confirmPassword = it }
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -183,10 +228,17 @@ fun SignupPage(navController: NavController, returnTo: String? = null, onSwitchT
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
+                    .padding(top = 16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = SugarFreeColors.Primary
+                ),
+                shape = MaterialTheme.shapes.medium
             ) {
-                Text(text = "Sign Up", color = Color.White)
+                Text(
+                    text = "Sign Up",
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -198,30 +250,36 @@ fun SignupPage(navController: NavController, returnTo: String? = null, onSwitchT
                     .padding(16.dp)
                     .clickable { onSwitchToLogin() },
                 textAlign = TextAlign.Center,
-                color = Color.Gray
+                color = SugarFreeColors.TextSecondary
             )
         }
     }
 }
 
 @Composable
-fun CustomTextField(value: TextFieldValue, placeholder: String, isPassword: Boolean = false, onValueChange: (TextFieldValue) -> Unit) {
+fun CustomTextField(
+    value: TextFieldValue,
+    placeholder: String,
+    isPassword: Boolean = false,
+    placeholderColor: Color = Color.Gray,
+    onValueChange: (TextFieldValue) -> Unit
+) {
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = Modifier
             .fillMaxWidth()
+            .border(1.dp, SugarFreeColors.Secondary, shape = MaterialTheme.shapes.small)
             .padding(16.dp),
         singleLine = true,
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         decorationBox = { innerTextField ->
-            Box(
-                Modifier
-                    .background(Color.LightGray, shape = MaterialTheme.shapes.small)
-                    .padding(16.dp)
-            ) {
+            Box {
                 if (value.text.isEmpty()) {
-                    Text(text = placeholder, color = Color.Gray)
+                    Text(
+                        text = placeholder,
+                        color = placeholderColor
+                    )
                 }
                 innerTextField()
             }
