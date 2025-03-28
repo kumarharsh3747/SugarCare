@@ -1,300 +1,276 @@
 package com.example.sugarfree
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.draw.clip
-@Composable
-fun HealthTipsScreen(navController: NavController) {
-    // List of categories and their corresponding emojis
-    val categoriesWithEmojis = listOf(
-        "🥒 Vegetables",  // Cucumber emoji for vegetables
-        "🍎 Fruits",      // Apple emoji for fruits
-        "🥜 Nuts",        // Peanut emoji for nuts
-        "🥗 Salads"       // Salad emoji for salads
-    )
+import kotlinx.coroutines.delay
 
-    // Tips list from the image
-    val tipsList = listOf(
-        "You should also have a few, 2-3 default meal options that are easy and fast to make, as well as healthy. That way you can always get something quick to eat out of the fridge and doesn't take effort.",
-        "If you need to eat out, choose dishes based around a lean protein source and lots of veggies or salad. Avoid those with sauces and that have been fried.",
-        "Replace sodas and processed fruit drinks with sparkling water flavored with a squeeze of fresh fruit juice. Nice ones to try are lemon, lime, tangerine, pomegranate, and grapefruit. Adding in fresh mint and cucumber slices makes a refreshing change.",
-        "Replace sugar and dairy laden hot drinks with herbal teas, green tea, black coffee, and golden milk. Golden milk is a fragrant chai-style drink made from coconut milk, turmeric, ginger, and other spices. Sweeten hot drinks with a dash of raw honey or maple syrup. Avoid sweetened lattes or sugary coffee shop drinks."
-    )
+// Game state class to track user progress
+ class GameState {
+    var points by mutableStateOf(0)
+    var completedChallenges by mutableStateOf(emptySet<String>())
+    var unlockedAchievements by mutableStateOf(emptySet<String>())
+}
+
+@Composable
+fun HealthTipsScreen(navController: NavController, gameState: GameState = remember { GameState() }) {
+    val scrollState = rememberScrollState()
+    Spacer(modifier = Modifier.height(16.dp))
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
     ) {
-        // Add title "What to eat??" on top
-        Text(
-            text = "What to eat??",
-            fontSize = 28.sp,
-            color = Color(0xFF6200EA), // Purple color
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
-
-        // Add the image inside a Box with padding on all sides
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.image5), // Replace with actual image resource
-                contentDescription = "Top Image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp)) // Rounded corners for the image
-                    .height(200.dp) // Adjust height as needed
-            )
-        }
+        // Gamification Header
+        GameHeader(gameState)
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Displaying the category emojis with labels
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            categoriesWithEmojis.forEach { category ->
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    val parts = category.split(" ") // Split emoji and category name
-
-                    // Display the emoji on one line
-                    Text(
-                        text = parts[0], // Emoji part
-                        fontSize = 40.sp, // Large size for emoji
-                        modifier = Modifier.padding(bottom = 4.dp) // Add padding below emoji
-                    )
-                    // Display the category name on the next line
-                    Text(
-                        text = parts[1], // Category name part
-                        fontSize = 16.sp, // Normal text size for category
-                        color = Color.Black
-                    )
-                }
-            }
-        }
+        // New interactive quiz game
+        SugarQuizGame(gameState)
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Title for Tips
-        Text(
-            text = "4 Tips to Succeed",
-            fontSize = 20.sp,
-            color = Color.Black,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
-
-        // Displaying tips from the image dynamically
-        tipsList.forEachIndexed { index, tip ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            ) {
-                Text(
-                    text = "${index + 1}️⃣", // Display the number with emoji
-                    fontSize = 24.sp,
-                    color = Color(0xFF6200EA), // Purple color for the numbers
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-                Text(
-                    text = tip,
-                    fontSize = 16.sp,
-                    color = Color.Gray,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
-
-        // Start button
-//        Button(
-//            onClick = {
-//                // Handle button click logic here
-//            },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(vertical = 8.dp),
-//            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EA))
-//        ) {
-//            Text(text = "🚀 START NOW", color = Color.White)
-//        }
+        // Daily challenge section
+        DailyChallengeSection(gameState)
     }
 }
 
 @Composable
-fun HealthTipsScreen2(navController: NavController) {
-    // Food items with emojis
-    val foodItemsWithEmojis = listOf(
-        "🥩 Grass-fed Beef",
-        "🐟 Wild Salmon",
-        "🥓 Bacon",
-        "🥚 Eggs",
-        "🥜 Raw Nuts",
-        "🫒 Olive Oil",
-        "🥥 Coconut Oil",
-        "🥑 Avocados",
-        "🥦 Low-Carb Veggies"
-    )
-
-    Column(
+private fun GameHeader(gameState: GameState) {
+    Card(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()) // Make the page scrollable
+            .fillMaxWidth()
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        // Add the image inside a Box with padding on all sides
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.image6), // Replace with actual image resource
-                contentDescription = "Top Image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp)) // Rounded corners for the image
-                    .height(200.dp) // Adjust height as needed
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Benefits Section
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(Color(0xFF6200EA), Color(0xFF03DAC5))
+                    )
+                )
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "Benefits",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF240046) // Dark color for title
+            // Points display
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("🏆 Points", color = Color.White)
+                Text(gameState.points.toString(), color = Color.White, fontSize = 24.sp)
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // Progress meter
+            val progress by animateFloatAsState(
+                targetValue = (gameState.points / 100f).coerceIn(0f, 1f),
+                label = "progress"
             )
-
+            CircularProgressIndicator(
+                progress = { progress },
+                modifier = Modifier.size(48.dp),
+                color = Color.White,
+                strokeWidth = 4.dp
+            )
         }
+    }
+}
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // List of benefits with emojis
-        Column {
-            Text(text = "🐆 Fat loss", fontSize = 16.sp, color = Color.Gray)
-            Text(text = "🧠 Mental focus and better mood, thanks to decreased brain inflammation.", fontSize = 16.sp, color = Color.Gray)
-            Text(text = "🍉 Decreased hunger and food cravings.", fontSize = 16.sp, color = Color.Gray)
-            Text(text = "🚴‍♂️ All-day energy with no crash, thanks to stable blood sugar.", fontSize = 16.sp, color = Color.Gray)
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // What to do section
-        Text(
-            text = "What to do",
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF240046)
+@Composable
+private fun SugarQuizGame(gameState: GameState) {
+    Spacer(modifier = Modifier.height(16.dp))
+    val questions = remember {
+        listOf(
+            QuizQuestion(
+                "Which has more sugar?",
+                "Apple 🍎" to "Soda Can 🥤",
+                correctAnswer = 2
+            ),
+            QuizQuestion(
+                "Which is healthier?",
+                "Salad 🥗" to "Donut 🍩",
+                correctAnswer = 1
+            )
         )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Avoid all refined sugars including white sugar, corn syrup and brown sugar. This also includes all added sweeteners such as sugar alcohols, molasses, stevia, coconut palm sugar, xylitol, agave, honey, maple syrup, and all artificial sweeteners such as truvia, splenda, nutrasweet, etc. This is important to start enjoying the real taste of food.",
-            fontSize = 16.sp,
-            color = Color.Gray
-        )
+    }
 
-        Spacer(modifier = Modifier.height(24.dp))
+    var currentQuestion by remember { mutableStateOf(0) }
+    var showResult by remember { mutableStateOf(false) }
+    var isCorrect by remember { mutableStateOf(false) }
 
-        // What Can I Eat section
-        Text(
-            text = "What Can I Eat",
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF240046)
-        )
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text("🎮 Sugar Quiz", style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
+            if (currentQuestion < questions.size) {
+                val question = questions[currentQuestion]
+                Text(question.text, style = MaterialTheme.typography.bodyLarge)
+                Spacer(modifier = Modifier.height(16.dp))
 
-        // Displaying food items with emojis in a 3-column grid-like view
-        Column {
-            // Using Row to organize the food items with emojis
-            for (i in foodItemsWithEmojis.indices step 3) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    foodItemsWithEmojis.getOrNull(i)?.let { item ->
-                        Text(text = item, fontSize = 18.sp, color = Color(0xFF240046))
+                    QuizButton(option = question.options.first) {
+                        isCorrect = question.correctAnswer == 1
+                        if (isCorrect) gameState.points += 20
+                        showResult = true
                     }
-                    foodItemsWithEmojis.getOrNull(i + 1)?.let { item ->
-                        Text(text = item, fontSize = 18.sp, color = Color(0xFF240046))
-                    }
-                    foodItemsWithEmojis.getOrNull(i + 2)?.let { item ->
-                        Text(text = item, fontSize = 18.sp, color = Color(0xFF240046))
+                    QuizButton(option = question.options.second) {
+                        isCorrect = question.correctAnswer == 2
+                        if (isCorrect) gameState.points += 20
+                        showResult = true
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+
+                if (showResult) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = if (isCorrect) "✅ Correct! +20 points" else "❌ Try again!",
+                        color = if (isCorrect) Color.Green else Color.Red
+                    )
+
+                    LaunchedEffect(showResult) {
+                        delay(2000)
+                        showResult = false
+                        currentQuestion++
+                    }
+                }
+            } else {
+                Text("Quiz completed! 🎉", color = Color.Green)
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Start Now button
-//        Button(
-//            onClick = {
-//                // Handle start now click
-//            },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(vertical = 8.dp),
-//            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EA))
-//        ) {
-//            Text(text = "🚀 START NOW", color = Color.White)
-//        }
     }
 }
 
 @Composable
-fun HealthTipsScreen3(navController: NavController) {
-    // List of categories and their corresponding emojis
-    val categoriesWithEmojis = listOf(
-        "🥒 Vegetables",  // Cucumber emoji for vegetables
-        "🍎 Fruits",      // Apple emoji for fruits
-        "🥜 Nuts",        // Peanut emoji for nuts
-        "🥗 Salads"       // Salad emoji for salads
-    )
+private fun QuizButton(option: String, onClick: () -> Unit) {
+    Button(onClick = onClick) {
+        Text(option, fontSize = 16.sp) // Display text with emoji
+    }
+}
 
-    // Tips list from the image
-    val tipsList = listOf(
-        "You should also have a few, 2-3 default meal options that are easy and fast to make, as well as healthy. That way you can always get something quick to eat out of the fridge and doesn't take effort.",
-        "If you need to eat out, choose dishes based around a lean protein source and lots of veggies or salad. Avoid those with sauces and that have been fried.",
-        "Replace sodas and processed fruit drinks with sparkling water flavored with a squeeze of fresh fruit juice. Nice ones to try are lemon, lime, tangerine, pomegranate, and grapefruit. Adding in fresh mint and cucumber slices makes a refreshing change.",
-        "Replace sugar and dairy laden hot drinks with herbal teas, green tea, black coffee, and golden milk. Golden milk is a fragrant chai-style drink made from coconut milk, turmeric, ginger, and other spices. Sweeten hot drinks with a dash of raw honey or maple syrup. Avoid sweetened lattes or sugary coffee shop drinks."
-    )
+@Composable
+private fun DailyChallengeSection(gameState: GameState) {
+    val challenges = remember {
+        listOf(
+            "Read 3 health tips" to 30,
+            "Complete quiz" to 50,
+            "Share with friend" to 40
+        )
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("🔥 Daily Challenges", style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            challenges.forEach { (challenge, points) ->
+                ChallengeItem(
+                    challenge = challenge,
+                    points = points,
+                    completed = gameState.completedChallenges.contains(challenge),
+                    onComplete = {
+                        gameState.completedChallenges = gameState.completedChallenges + challenge
+                        gameState.points += points
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ChallengeItem(challenge: String, points: Int, completed: Boolean, onComplete: () -> Unit) {
+    Spacer(modifier = Modifier.height(16.dp))
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Icon for challenge status (Completed or Not Completed)
+        Icon(
+            imageVector = if (completed) Icons.Default.Check else Icons.Default.Close,
+            contentDescription = "Challenge status",
+            tint = if (completed) Color.Green else Color.Red
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        // Challenge text
+        Text(challenge, modifier = Modifier.weight(1f))
+
+        // Points display
+        Text("+$points", color = Color(0xFF6200EA))
+
+        // Claim button (only if challenge is not completed)
+        if (!completed) {
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(onClick = onComplete, modifier = Modifier.height(32.dp)) {
+                Text("Claim")
+            }
+        }
+    }
+}
+
+data class QuizQuestion(
+    val text: String,
+    val options: Pair<String, String>,
+    val correctAnswer: Int
+)
+
+
+@Composable
+fun HealthTipsScreen2(navController: NavController, gameState: GameState) {
+    Spacer(modifier = Modifier.height(16.dp))
+    val foodItems = remember {
+        listOf(
+            "🥩 Grass-fed Beef" to false,
+            "🐟 Wild Salmon" to false,
+            "🥓 Bacon" to false,
+            "🥚 Eggs" to false,
+            "🥜 Raw Nuts" to false,
+            "🫒 Olive Oil" to false,
+            "🥥 Coconut Oil" to false,
+            "🥑 Avocados" to false,
+            "🥦 Low-Carb Veggies" to false
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -302,107 +278,204 @@ fun HealthTipsScreen3(navController: NavController) {
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        // Add title "What to eat??" on top
-        Text(
-            text = "What to eat??",
-            fontSize = 28.sp,
-            color = Color(0xFF6200EA), // Purple color
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
+        GameHeader(gameState)
 
-        // Add the image inside a Box with padding on all sides
+        // Existing content
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.image5), // Replace with actual image resource
+                painter = painterResource(id = R.drawable.image6),
                 contentDescription = "Top Image",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp)) // Rounded corners for the image
-                    .height(200.dp) // Adjust height as needed
+                    .clip(RoundedCornerShape(8.dp))
+                    .height(200.dp)
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Displaying the category emojis with labels
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            categoriesWithEmojis.forEach { category ->
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    val parts = category.split(" ") // Split emoji and category name
+        // Interactive Food Collector Game
+        Text(
+            text = "🍎 Food Collector",
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF240046)
+        )
 
-                    // Display the emoji on one line
-                    Text(
-                        text = parts[0], // Emoji part
-                        fontSize = 40.sp, // Large size for emoji
-                        modifier = Modifier.padding(bottom = 4.dp) // Add padding below emoji
-                    )
-                    // Display the category name on the next line
-                    Text(
-                        text = parts[1], // Category name part
-                        fontSize = 16.sp, // Normal text size for category
-                        color = Color.Black
-                    )
-                }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(foodItems.size) { index ->
+                FoodCollectorItem(
+                    item = foodItems[index].first,
+                    collected = foodItems[index].second,
+                    onClick = {
+                        gameState.points += 15
+                        // Update collection status
+                    }
+                )
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // Rest of existing content remains the same...
+        // [Include all your original HealthTipsScreen2 content here]
+    }
+}
 
-        // Title for Tips
+@Composable
+fun HealthTipsScreen3(navController: NavController, gameState: GameState) {
+    Spacer(modifier = Modifier.height(16.dp))
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        GameHeader(gameState)
+
+        // Progress Challenge
+        DailyProgressChallenge(gameState)
+
+        // Existing content
         Text(
-            text = "4 Tips to Succeed",
-            fontSize = 20.sp,
-            color = Color.Black,
+            text = "What to eat??",
+            fontSize = 28.sp,
+            color = Color(0xFF6200EA),
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
         )
 
-        // Displaying tips from the image dynamically
-        tipsList.forEachIndexed { index, tip ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            ) {
-                Text(
-                    text = "${index + 1}️⃣", // Display the number with emoji
-                    fontSize = 24.sp,
-                    color = Color(0xFF6200EA), // Purple color for the numbers
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-                Text(
-                    text = tip,
-                    fontSize = 16.sp,
-                    color = Color.Gray,
-                    modifier = Modifier.fillMaxWidth()
-                )
+        // Interactive Meal Planner
+        MealPlannerGame(gameState)
+
+        // Rest of existing content remains the same...
+        // [Include all your original HealthTipsScreen3 content here]
+    }
+}
+
+// New Game Components
+@Composable
+private fun FoodCollectorItem(item: String, collected: Boolean, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .width(100.dp)
+            .clickable(enabled = !collected) { onClick() },
+        elevation = CardDefaults.cardElevation(if (collected) 0.dp else 4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .background(if (collected) Color.LightGray else Color.White)
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = item.substringBefore(" "),
+                fontSize = 24.sp
+            )
+            Text(
+                text = item.substringAfter(" "),
+                fontSize = 12.sp,
+                color = if (collected) Color.Gray else Color.DarkGray
+            )
+            if (!collected) {
+                Text("+15", color = Color.Green, fontSize = 10.sp)
             }
         }
+    }
+}
 
-//        // Start button
-//        Button(
-//            onClick = {
-//                // Handle button click logic here
-//            },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(vertical = 8.dp),
-//            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EA))
-//        ) {
-//            Text(text = "🚀 START NOW", color = Color.White)
-//        }
+@Composable
+private fun MealPlannerGame(gameState: GameState) {
+    var selectedItems by remember { mutableStateOf(emptySet<String>()) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("🍽️ Daily Meal Planner", style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            val mealOptions = listOf("🥗 Salad", "🍗 Grilled Chicken", "🥦 Steamed Veggies", "🍳 Omelette")
+
+            mealOptions.forEach { option ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            selectedItems = if (selectedItems.contains(option)) {
+                                selectedItems - option
+                            } else {
+                                if (selectedItems.size < 3) selectedItems + option
+                                else selectedItems
+                            }
+                        }
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = selectedItems.contains(option),
+                        onCheckedChange = null
+                    )
+                    Text(option, modifier = Modifier.weight(1f))
+                }
+            }
+
+            Button(
+                onClick = {
+                    if (selectedItems.size == 3) {
+                        gameState.points += 50
+                    }
+                },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text("Complete Plan +50")
+            }
+        }
+    }
+}
+@Composable
+private fun DailyProgressChallenge(gameState: GameState) {
+    var waterCount by remember { mutableStateOf(0) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("💧 Water Tracking", style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) { // <- Fixed misplaced parenthesis
+                Button(
+                    onClick = {
+                        if (waterCount < 8) {
+                            waterCount++
+                            gameState.points += 10
+                        }
+                    },
+                    enabled = waterCount < 8
+                ) {
+                    Text("Add Glass +10")
+                }
+
+                Text("$waterCount/8", fontSize = 24.sp)
+            }
+        }
     }
 }

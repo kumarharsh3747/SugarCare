@@ -61,7 +61,7 @@ fun Home(navController: NavController) {
                 )
             }
         },
-        bottomBar = { BottomNavigationBar(navController) },
+       // bottomBar = { BottomNavigationBar(navController) },
 //        floatingActionButton = {
 //            FloatingActionButton(
 //                onClick = { navController.navigate("healthMonitor") },
@@ -131,7 +131,7 @@ fun InfiniteLoopedImageBox(
                     .clip(RoundedCornerShape(8.dp))
                     .clickable { navController.navigate(route = "detox") }
                     .padding(8.dp)
-                    ,
+                ,
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -207,24 +207,24 @@ fun InfiniteLoopedImageBox(
 fun AppBar3(navController: NavController) {
     val currentUser = auth.currentUser
 
-     if(currentUser==null)
-     {
-         TopAppBar(
-             title = { Text(text = "Login") },
-             navigationIcon = {
-                 Box(modifier = Modifier.padding(start = 8.dp)) {
-                     Image(
-                         painter = painterResource(id = R.drawable.user),
-                         contentDescription = "Profile Picture",
-                         modifier = Modifier
-                             .size(40.dp)
-                             .clip(CircleShape)
-                             .clickable { navController.navigate("auth") } // Navigate to AuthPage for login/signup
-                     )
-                 }
-             }
-         )
-     }
+    if(currentUser==null)
+    {
+        TopAppBar(
+            title = { Text(text = "Login") },
+            navigationIcon = {
+                Box(modifier = Modifier.padding(start = 8.dp)) {
+                    Image(
+                        painter = painterResource(id = R.drawable.user),
+                        contentDescription = "Profile Picture",
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .clickable { navController.navigate("auth") } // Navigate to AuthPage for login/signup
+                    )
+                }
+            }
+        )
+    }
     else
     {
         TopAppBar(
