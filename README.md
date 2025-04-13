@@ -3,7 +3,7 @@
 ![Made with Kotlin](https://img.shields.io/badge/Made%20with-Kotlin-blueviolet)
 ![Firebase](https://img.shields.io/badge/Powered%20by-Firebase-orange)
 ![Jetpack Compose](https://img.shields.io/badge/UI-Jetpack%20Compose-green)
-![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
 
 ## 📱 Overview
 
